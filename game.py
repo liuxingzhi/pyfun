@@ -110,7 +110,7 @@ def check_crash(plane, enemy):
 
 pygame.init()
 screen = pygame.display.set_mode((450, 800), 0, 32)
-pygame.display.set_caption("fire at your professor")
+pygame.display.set_caption("luoxiaoheidazuozhan")
 
 image = pygame.image.load('luoxiaoheizhanji.jpg').convert()
 background = pygame.transform.scale(image, (450, 800))
