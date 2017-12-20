@@ -41,7 +41,7 @@ class Bullet:
 
     def move(self):
         if self.active:
-            self.y -= 3
+            self.y -= 15
         if self.y < 0:
             self.active = False
 
@@ -69,7 +69,7 @@ class Enemy:
         self.y = -50
         image = pygame.image.load('huangshou.jpg').convert_alpha()
         self.image = pygame.transform.scale(image, (60, 60))
-        self.speed = 0.3
+        self.speed = 3.3
         self.id = Enemy.count
         Enemy.count += 1
 
@@ -83,7 +83,10 @@ class Enemy:
         self.x = random.randint(50, 400)
         self.y = random.randint(-200, -50)
         # base speed is 0.1
-        self.speed = random.random() + 0.1
+        self.speed = random.random()*10 + 1.0
+
+    def show(self):
+        screen.blit(self.image, (self.x, self.y))
 
     def __str__(self):
         return "x is {x}, y is {y}, id is {id}".format(x=self.x, y=self.y, id=self.id)
@@ -125,7 +128,7 @@ for i in range(5):
     # print(bullets[i])
 count_b = len(bullets)
 index_b = 0
-interval_b = 100
+interval_b = -1
 plane = Plane()
 game_over = False
 score = 0
@@ -151,7 +154,7 @@ while True:
         interval_b -= 1
         if interval_b < 0:
             bullets[index_b].restart()
-            interval_b = 100
+            interval_b = 10
             index_b = (index_b + 1) % count_b
         for b in bullets:
             if b.active:
@@ -164,7 +167,7 @@ while True:
             if check_crash(plane,e):
                 game_over = True
             e.move()
-            screen.blit(e.image, (e.x, e.y))
+            e.show()
         plane.move()
         plane.show()
         # print(plane)
