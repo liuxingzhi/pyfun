@@ -123,7 +123,6 @@ background = pygame.transform.scale(image, (450, 800))
 enemies = []
 for i in range(5):
     enemies.append(Enemy())
-    print(enemies[i])
 
 bullets = []
 for i in range(5):
