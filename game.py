@@ -65,11 +65,12 @@ class Enemy:
     count = 1
 
     def __init__(self):
-        self.x = 200
-        self.y = -50
+        # self.x = 200
+        # self.y = -50
         image = pygame.image.load('huangshou.jpg').convert_alpha()
         self.image = pygame.transform.scale(image, (60, 60))
-        self.speed = 3.3
+        # self.speed = 3.3
+        self.restart()
         self.id = Enemy.count
         Enemy.count += 1
 
@@ -122,6 +123,8 @@ background = pygame.transform.scale(image, (450, 800))
 enemies = []
 for i in range(5):
     enemies.append(Enemy())
+    print(enemies[i])
+
 bullets = []
 for i in range(5):
     bullets.append(Bullet())
@@ -154,7 +157,7 @@ while True:
         interval_b -= 1
         if interval_b < 0:
             bullets[index_b].restart()
-            interval_b = 10
+            interval_b = 15
             index_b = (index_b + 1) % count_b
         for b in bullets:
             if b.active:
