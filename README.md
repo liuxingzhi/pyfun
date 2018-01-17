@@ -10,6 +10,6 @@ a stream of huangshou is coming. What should luoxiaohe do?
 
 instruction:
 
-control luoxiaohei using mouse and shoot at huangshou
-win points if destroy enemy 
-lose if touched by enemy
+control luoxiaohei using mouse and shoot at huangshou <br>
+win points if destroy enemy <br>
+lose if touched by enemy <br>
