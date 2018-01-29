@@ -84,7 +84,7 @@ class Enemy:
         self.x = random.randint(50, 400)
         self.y = random.randint(-200, -50)
         # base speed is 0.1
-        self.speed = random.random()*10 + 1.0
+        self.speed = random.random() + 0.3
 
     def show(self):
         screen.blit(self.image, (self.x, self.y))
@@ -136,6 +136,9 @@ game_over = False
 score = 0
 font = pygame.font.Font(None, 32)
 font_over = pygame.font.Font(None, 64)
+
+# control the frame rate
+clock = pygame.time.Clock()
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -175,6 +178,7 @@ while True:
         # print(plane)
         text = font.render("Score: {score}".format(score=score), 1, (0, 0, 0))
         screen.blit(text, (0, 0))
+        clock.tick(250)
 
     else:
         # show score
