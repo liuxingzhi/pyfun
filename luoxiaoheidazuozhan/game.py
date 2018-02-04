@@ -8,18 +8,19 @@ import pygame
 import random
 from sys import exit
 
+
 class Plane:
     def __init__(self):
         image = pygame.image.load('xiaohei.jpg').convert_alpha()
         self.image = pygame.transform.scale(image, (60, 60))
         w, h = pygame.display.get_surface().get_size()
-        self.x = w/2
-        self.y = h/2
+        self.x = w / 2
+        self.y = h / 2
 
     def move(self):
         x, y = pygame.mouse.get_pos()
-        self.x = x - self.image.get_width()/2
-        self.y = y - self.image.get_height()/2
+        self.x = x - self.image.get_width() / 2
+        self.y = y - self.image.get_height() / 2
 
     def show(self):
         screen.blit(self.image, (self.x, self.y))
@@ -169,7 +170,7 @@ while True:
                 b.move()
                 b.show()
         for e in enemies:
-            if check_crash(plane,e):
+            if check_crash(plane, e):
                 game_over = True
             e.move()
             e.show()
@@ -184,8 +185,7 @@ while True:
         # show score
         text = font_over.render("Score: {score}".format(score=score), 1, (0, 0, 0))
         w, h = pygame.display.get_surface().get_size()
-        screen.blit(text, (w/4, h/5))
+        screen.blit(text, (w / 4, h / 5))
 
     pygame.mouse.set_visible(False)
     pygame.display.update()
-

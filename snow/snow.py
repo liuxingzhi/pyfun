@@ -16,12 +16,12 @@ snow_list = []
 
 
 class Snowflake:
-    def __init__(self, x, y, sx, sy, radius):
-        self.x = x
-        self.y = y
-        self.sx = sx
-        self.sy = sy
-        self.r = radius
+    def __init__(self):
+        self.x = random.randrange(0, SIZE[0])
+        self.y = random.randrange(0, SIZE[1])
+        self.sx = random.randint(-1, 1)  # x speed
+        self.sy = random.randint(3, 6)  # y speed
+        self.r = random.randint(0, 3)
 
     def fly(self):
         self.x += self.sx
@@ -29,12 +29,7 @@ class Snowflake:
 
 
 for i in range(270):
-    x = random.randrange(0, SIZE[0])
-    y = random.randrange(0, SIZE[1])
-    sx = random.randint(-1, 1)  # x speed
-    sy = random.randint(3, 6)  # y speed
-    r = random.randint(0, 3)
-    snow = Snowflake(x, y, sx, sy, r)
+    snow = Snowflake()
     snow_list.append(snow)
 
 # set the frame rate
