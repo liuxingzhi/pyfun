@@ -32,7 +32,7 @@ def draw_field(num_charge):
 
     # creat arrow around electric balls
     arrows = []
-    for x in arange(-1 * l, 1.1 * l, 0.3 * l):
+    for x in arange(-1.5 * l, 1.51 * l, 0.3 * l):
         E = 0
         for y in arange(-1 * l, 1.1 * l, 0.4 * l):
             for z in arange(-1 * l, 1.1 * l, 0.4 * l):
