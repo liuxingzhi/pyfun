@@ -1,6 +1,6 @@
 # pyfun
 
-when inspiration comes, write some python program
+when an inspiration comes, write a python program
 
 program list:
 
