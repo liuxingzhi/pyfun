@@ -33,7 +33,7 @@ for x in arange(-5, 5.1, L / N):
 
 # arrows = []
 # creat arrow along x axis
-for x in arange(-1.5 * l, 1.5 * l, 0.2 * l):
+for x in arange(-1 * l, 1.1 * l, 0.3 * l):
     rate(20)
     E = 0
     for y in arange(-1 * l, 1.1 * l, 0.5 * l):
