@@ -1,8 +1,5 @@
 from vpython import *
 
-# scene = display(width=400, height=400)
-scene = canvas(title='electric field of a list of charges', width=800, height=600, background=color.magenta)
-
 # some useful constants
 k = 9e9  # force constant
 q = 1.6e-19  # unit of charge
@@ -17,6 +14,7 @@ class ElectricBall(sphere):
 
 # create a list of charges to simulate a eletric bar
 def draw_field(num_charge):
+    scene = canvas(title='electric field of a list of charges', width=800, height=600, background=color.magenta)
     # variables
     # bar length
     l = num_charge
@@ -33,7 +31,6 @@ def draw_field(num_charge):
     # creat arrow around electric balls
     arrows = []
     for x in arange(-1.5 * l, 1.51 * l, 0.3 * l):
-        E = 0
         for y in arange(-1 * l, 1.1 * l, 0.4 * l):
             for z in arange(-1 * l, 1.1 * l, 0.4 * l):
                 pointer = arrow(pos=vector(x, y, z), color=color.white, opacity=0.0)
@@ -66,7 +63,7 @@ def draw_field(num_charge):
 
 
 def main():
-    draw_field(9)
+    draw_field(8)
 
 
 if __name__ == '__main__':
