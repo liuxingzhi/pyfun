@@ -1,8 +1,8 @@
 # pyfun
 
-when an inspiration comes, write a python program
+<p>when an inspiration comes, write a python program</p>
 
-program list:
+<p>program list:</p>
     <ul>
     <li>Electric field: draw electric field of an electrical bar in canvas in browser using vpython</li>
     <li>luoxiaoheidazuozhan: a shooting game written in pygame</li>
