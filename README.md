@@ -4,7 +4,7 @@ when an inspiration comes, write a python program
 
 program list:
 
-    Electric field: draw electric field of an electrical bar in canvas in browser using vpython
+    Electric field: draw electric field of bar in canvas in browser using vpython
     
     luoxiaoheidazuozhan: a shooting game written in pygame
     
