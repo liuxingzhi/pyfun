@@ -2,10 +2,11 @@
 
 when an inspiration comes, write a python program
 
-    Electric field: draw electric field of an electrical bar in canvas in browser using vpython
-    
-    luoxiaoheidazuozhan: a shooting game written in pygame
-    
-    snow: simulate the effect of snow using pygame
+program list:
+    <ul>
+    <li>Electric field: draw electric field of an electrical bar in canvas in browser using vpython</li>
+    <li>luoxiaoheidazuozhan: a shooting game written in pygame</li>
+    <li>snow: simulate the effect of snow using pygame</li>
+    </ul>
     
     
