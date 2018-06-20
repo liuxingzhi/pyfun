@@ -1,13 +1,12 @@
 # pyfun
 
-when an inspiration comes, write a python program
+<p>when an inspiration comes, write a python program</p>
 
-program list:
-
-    Electric field: draw electric field of a bar in canvas in browser using vpython
-    
-    luoxiaoheidazuozhan: a shooting game written in pygame
-    
-    snow: simulate the effect of snow using pygame
+<p>program list:</p>
+    <ul>
+    <li>Electric field: draw electric field of an electrical bar in canvas in browser using vpython</li>
+    <li>luoxiaoheidazuozhan: a shooting game written in pygame</li>
+    <li>snow: simulate the effect of snow using pygame</li>
+    </ul>
     
     
