@@ -64,5 +64,3 @@ def haici_lookup(phrase):
     except AttributeError as e:
         print(e)
         return "没有找到与此相符的结果"
-
-
