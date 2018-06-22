@@ -9,8 +9,8 @@ tuling_url = "http://openapi.tuling123.com/openapi/api"
 
 
 def google_translate(content):
-    translator = Translator(timeout=3)
     try:
+        translator = Translator(timeout=3)
         content_info = translator.detect(content)
         print(content_info)
         result = None
@@ -24,8 +24,11 @@ def google_translate(content):
         result += "\n" + "  //by google translation"
         return result
     except ConnectionError as e:
-        print(e)
+        print("连不上google服务器")
         return "连接异常"
+    except:
+        print("google其他异常")
+        return "google服务异常"
 
 
 def tuling_response(dialog):
@@ -37,7 +40,8 @@ def tuling_response(dialog):
         result = requests.post(tuling_url, data=data).json()
         return result['text']
     except:
-        return ""
+        print("图灵机的异常")
+        return "哎呀，出错了呢，看来我还需要改进"
 
 
 def haici_lookup(phrase):
@@ -59,8 +63,11 @@ def haici_lookup(phrase):
                 meaning += tag.text
         return meaning
     except (HTTPError, Timeout) as e:
-        print(e)
+        print("网络异常，连接超时")
         return "网络异常"
     except AttributeError as e:
-        print(e)
+        print("单词不存在")
         return "没有找到与此相符的结果"
+    except:
+        print("海词词典的其他异常")
+        return "哎呀，出错了呢，看来我还需要改进"
