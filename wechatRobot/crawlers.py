@@ -25,7 +25,7 @@ def google_translate(content):
         return result
     except ConnectionError as e:
         print("连不上google服务器")
-        return "连接异常"
+        return "连接google失败，貌似主人忘了接VPN？"
     except:
         print("google其他异常")
         return "google服务异常"

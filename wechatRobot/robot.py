@@ -16,8 +16,14 @@ user_nickname_dict = {}
 introduction = "你好,我是Abel的微信机器人艾伯. 现在的功能有:\n查单词(直接输入)\n#开头翻译句子\n中文聊天\n你说‘开始’我会开始说话，你说‘停止’我就会停止"
 keywords = ["说明", "介绍", "你是谁"]
 my_id = None
+
+"""检测英文单词或词组"""
 word_pattern = re.compile("^[a-zA-z\s]+$")
-detect_sharp = re.compile["^[\s#]+#"]
+
+"""检测是否#开头，允许#之前有空格"""
+detect_sharp = re.compile("^[\s#]*#")
+
+project_address = "https://github.com/liuxingzhi/pyfun/tree/master/wechatRobot"
 
 
 @itchat.msg_register(TEXT, isFriendChat=True)
@@ -29,59 +35,88 @@ def text_reply(msg):
         print("收到消息", text)
         print("来自", user_nickname_dict[sender_id], sender_id)
 
-        """检测特殊口令"""
-        if text == "停止":
-            if sender_id == my_id:
-                user_status_dict[receiver_id] = 0
-            else:
-                user_status_dict[sender_id] = 0
-            return
-        if text == "开始":
-            if sender_id == my_id:
-                user_status_dict[receiver_id] = 1
-                itchat.send("已启动", sender_id)
-                return
-            if user_status_dict[sender_id] > 1:
-                itchat.send("已启动，请说话", sender_id)
-                user_status_dict[sender_id]
-                return
-            user_status_dict[sender_id] = 1
-
+        """我发送的消息"""
         if sender_id == my_id:
-            return
+            """检测特殊口令"""
+            if text == "停止":
+                user_status_dict[receiver_id] = 0
+                return
+            if text == "开始":
+                user_status_dict[receiver_id] = 1
 
-        """检测状态码"""
-        if user_status_dict[sender_id] == 0:
-            return
+            """检测状态码"""
+            if user_status_dict[receiver_id] == 0:
+                return
 
-        result = None
-        if user_status_dict[sender_id] == 1:
-            result = introduction
-        else:
-            if word_pattern.match(text) is not None:
-                """查单词模块"""
-                result = haici_lookup(text)
-                if result == "没有找到与此相符的结果":
-                    result = text
-
-            elif detect_sharp.match(text):
-                """google翻译模块"""
-                query = re.sub(detect_sharp, "", text)
-                result = google_translate(query)
-
+            result = None
+            if user_status_dict[receiver_id] == 1:
+                result = introduction
             else:
-                """图灵机器人回复模块"""
-                head = text[:4]
-                """关键词检测"""
-                for keyword in keywords:
-                    if keyword in head:
-                        result = introduction
-                        break
+                if word_pattern.match(text) is not None:
+                    """查单词模块"""
+                    result = haici_lookup(text)
+                    if result == "没有找到与此相符的结果":
+                        result = text
+                elif detect_sharp.match(text):
+                    """google翻译模块"""
+                    query = re.sub(detect_sharp, "", text)
+                    result = google_translate(query)
+            user_status_dict[receiver_id] += 1
+            print("返回结果", result, "\n")
+            itchat.send(result, receiver_id)
+            return
+
+        else:
+            """对方发送的消息"""
+            """检测特殊口令"""
+            if text == "停止":
+                user_status_dict[sender_id] = 0
+                return
+            if text == "开始":
+                if user_status_dict[sender_id] > 1:
+                    itchat.send("你说，我在", sender_id)
+                    return
                 else:
-                    result = tuling_response(text)
-        user_status_dict[sender_id] += 1
-        print("返回结果", result, "\n")
-        itchat.send(result, sender_id)
+                    user_status_dict[sender_id] = 1
+
+            """检测状态码"""
+            if user_status_dict[sender_id] == 0:
+                return
+
+            result = None
+            if user_status_dict[sender_id] == 1:
+                result = introduction
+            else:
+                if text == "?":
+                    result = "? + 1"
+                elif text == "项目地址":
+                    result = project_address
+                elif word_pattern.match(text) is not None:
+                    """查单词模块"""
+                    result = haici_lookup(text)
+                    if result == "没有找到与此相符的结果":
+                        result = text
+
+                elif detect_sharp.match(text):
+                    """google翻译模块"""
+                    query = re.sub(detect_sharp, "", text)
+                    result = google_translate(query)
+
+                else:
+                    """图灵机器人回复模块"""
+                    head = text[:4]
+                    """关键词检测"""
+                    for keyword in keywords:
+                        if keyword in head:
+                            result = introduction
+                            break
+                    else:
+                        result = tuling_response(text)
+                        if result == "我不会说英语的啦，你还是说中文吧。":
+                            result = goole_translate(result)
+            user_status_dict[sender_id] += 1
+            print("返回结果", result, "\n")
+            itchat.send(result, sender_id)
     except:
         print("装饰器的异常")
 
