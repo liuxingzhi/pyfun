@@ -24,6 +24,9 @@ word_pattern = re.compile("^[a-zA-z\s]+$")
 """检测是否#开头，允许#之前有空格"""
 detect_sharp = re.compile("^[\s#]*#")
 
+"""检测疑问句"""
+confuse_pattern = re.compile("^[?\s]+$")
+
 project_address = "https://github.com/liuxingzhi/pyfun/tree/master/wechatRobot"
 
 
@@ -34,7 +37,7 @@ def text_reply(msg):
         sender_id = msg['FromUserName']
         receiver_id = msg['ToUserName']
         print("收到消息", text)
-        print("来自", user_nickname_dict[sender_id], sender_id)
+        print("来自", user_nickname_dict[sender_id], "发给", user_nickname_dict[receiver_id])
 
         """我发送的消息"""
         if sender_id == my_id:
@@ -47,6 +50,7 @@ def text_reply(msg):
 
             """检测状态码"""
             if user_status_dict[receiver_id] == 0:
+                print("接收方状态为关闭")
                 return
 
             result = None
@@ -62,6 +66,13 @@ def text_reply(msg):
                     """google翻译模块"""
                     query = re.sub(detect_sharp, "", text)
                     result = google_translate(query)
+                else:
+                    """关键词检测"""
+                    head = text[:4]
+                    for keyword in keywords:
+                        if keyword in head:
+                            result = introduction
+                            break
             user_status_dict[receiver_id] += 1
             print("返回结果", result, "\n")
             itchat.send(result, receiver_id)
@@ -70,7 +81,7 @@ def text_reply(msg):
         else:
             """对方发送的消息"""
             """检测特殊口令"""
-            if text == "停止":
+            if text == "停止" or text == "结束":
                 user_status_dict[sender_id] = 0
                 return
             if text == "开始":
@@ -82,13 +93,14 @@ def text_reply(msg):
 
             """检测状态码"""
             if user_status_dict[sender_id] == 0:
+                print("接收方状态为关闭")
                 return
 
             result = None
             if user_status_dict[sender_id] == 1:
                 result = introduction
             else:
-                if text == "?":
+                if confuse_pattern.match(text) is not None:
                     result = "? + 1"
                 elif text == "项目地址":
                     result = project_address
