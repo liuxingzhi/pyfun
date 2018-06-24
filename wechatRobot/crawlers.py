@@ -57,7 +57,7 @@ def haici_lookup(phrase):
         html = r.text
         soup = BeautifulSoup(html, "html.parser")
         meaning = ""
-        tags = soup.body.find("div", attrs={'class': 'basic clearfix'}).find("li").children
+        tags = soup.body.find(name="div", attrs={'class': 'basic clearfix'}).find("li").children
         for tag in tags:
             if isinstance(tag, bs4.element.Tag):
                 meaning += tag.text

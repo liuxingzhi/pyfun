@@ -7,6 +7,7 @@ import re
    0 关闭
    1 第一次见面
    >1 对话中，统计本次对话次数
+   初始化是0
 """
 user_status_dict = {}
 
@@ -132,7 +133,7 @@ def main():
         nickname = user.get("NickName")
         if index == 0:
             my_id = id
-        user_status_dict[id] = 1
+        user_status_dict[id] = 0
         user_nickname_dict[id] = nickname
 
     itchat.run()
