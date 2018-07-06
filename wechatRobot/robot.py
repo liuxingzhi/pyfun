@@ -1,6 +1,6 @@
 import itchat
 from itchat.content import *
-from crawlers import *
+from wechatRobot.crawlers import *
 import re
 
 """key:id, value:状态码
@@ -19,12 +19,12 @@ keywords = ["说明", "介绍", "你是谁"]
 my_id = None
 
 """检测英文单词或词组"""
-word_pattern = re.compile("^[a-zA-z\s]+$")
+english_phrase = re.compile("^[a-zA-z\s]+$")
 
 """检测是否#开头，允许#之前有空格"""
-detect_sharp = re.compile("^[\s#]*#")
+sharp_symbol_begin = re.compile("^[\s#]*#")
 
-"""检测疑问句"""
+"""聊天经常出现?或??表示困惑,使用它匹配"""
 confuse_pattern = re.compile("^[?\s]+$")
 
 project_address = "https://github.com/liuxingzhi/pyfun/tree/master/wechatRobot"
@@ -57,14 +57,14 @@ def text_reply(msg):
             if user_status_dict[receiver_id] == 1:
                 result = introduction
             else:
-                if word_pattern.match(text) is not None:
+                if english_phrase.match(text) is not None:
                     """查单词模块"""
                     result = haici_lookup(text)
                     if result == "没有找到与此相符的结果":
                         result = text
-                elif detect_sharp.match(text):
+                elif sharp_symbol_begin.match(text):
                     """google翻译模块"""
-                    query = re.sub(detect_sharp, "", text)
+                    query = re.sub(sharp_symbol_begin, "", text)
                     result = google_translate(query)
                 else:
                     """关键词检测"""
@@ -73,6 +73,10 @@ def text_reply(msg):
                         if keyword in head:
                             result = introduction
                             break
+                        # else:
+                        #     result = tuling_response(text)
+                        #     if result == "我不会说英语的啦，你还是说中文吧。":
+                        #         result = goole_translate(result)
             user_status_dict[receiver_id] += 1
             print("返回结果", result, "\n")
             itchat.send(result, receiver_id)
@@ -104,15 +108,15 @@ def text_reply(msg):
                     result = "? + 1"
                 elif text == "项目地址":
                     result = project_address
-                elif word_pattern.match(text) is not None:
+                elif english_phrase.match(text) is not None:
                     """查单词模块"""
                     result = haici_lookup(text)
                     if result == "没有找到与此相符的结果":
                         result = text
 
-                elif detect_sharp.match(text):
+                elif sharp_symbol_begin.match(text):
                     """google翻译模块"""
-                    query = re.sub(detect_sharp, "", text)
+                    query = re.sub(sharp_symbol_begin, "", text)
                     result = google_translate(query)
 
                 else:
