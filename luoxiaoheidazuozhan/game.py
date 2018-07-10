@@ -7,11 +7,18 @@ Created on Tue Dec 19 01:12:35 2017
 import pygame
 import random
 from sys import exit
+import os
 
+os.chdir('imgs')
+my_plane_img = '小黑.jpg'
+background_img = '罗小黑战记.jpg'
+enemy_img = '黄受.jpg'
+bullet_img = 'bullet.jpg'
+game_name = "罗小黑大作战"
 
 class Plane:
     def __init__(self):
-        image = pygame.image.load('xiaohei.jpg').convert_alpha()
+        image = pygame.image.load(my_plane_img).convert_alpha()
         self.image = pygame.transform.scale(image, (60, 60))
         w, h = pygame.display.get_surface().get_size()
         self.x = w / 2
@@ -37,7 +44,7 @@ class Bullet:
     def __init__(self):
         self.x = 0
         self.y = -1
-        self.image = pygame.image.load('bullet.jpg').convert_alpha()
+        self.image = pygame.image.load(bullet_img).convert_alpha()
         self.active = False
 
     def move(self):
@@ -68,11 +75,14 @@ class Enemy:
     def __init__(self):
         # self.x = 200
         # self.y = -50
-        image = pygame.image.load('huangshou.jpg').convert_alpha()
+        image = pygame.image.load(enemy_img).convert_alpha()
         self.image = pygame.transform.scale(image, (60, 60))
         # self.speed = 3.3
-        self.restart()
+        self.x = 0
+        self.y = 0
+        self.speed = 0
         self.id = Enemy.count
+        self.restart()
         Enemy.count += 1
 
     def move(self):
@@ -115,12 +125,11 @@ def check_crash(plane, enemy):
 
 pygame.init()
 screen = pygame.display.set_mode((450, 800), 0, 32)
-pygame.display.set_caption("luoxiaoheidazuozhan")
+pygame.display.set_caption(game_name)
 
-image = pygame.image.load('luoxiaoheizhanji.jpg').convert()
+image = pygame.image.load(background_img).convert()
 background = pygame.transform.scale(image, (450, 800))
 
-# plane = pygame.image.load('plane.jpg').convert_alpha()
 enemies = []
 for i in range(5):
     enemies.append(Enemy())
@@ -160,6 +169,7 @@ while True:
         interval_b -= 1
         if interval_b < 0:
             bullets[index_b].restart()
+            """子弹冷却时间"""
             interval_b = 15
             index_b = (index_b + 1) % count_b
         for b in bullets:
