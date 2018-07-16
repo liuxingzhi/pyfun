@@ -71,7 +71,9 @@ class Bullet:
 
 class Enemy:
     count = 1
-
+    life = 3
+    base_speed = 0.3
+    
     def __init__(self):
         # self.x = 200
         # self.y = -50
@@ -80,7 +82,8 @@ class Enemy:
         # self.speed = 3.3
         self.x = 0
         self.y = 0
-        self.speed = 0
+        self.speed = 0.3
+        self.life = Enemy.life
         self.id = Enemy.count
         self.restart()
         Enemy.count += 1
@@ -94,8 +97,9 @@ class Enemy:
     def restart(self):
         self.x = random.randint(50, 400)
         self.y = random.randint(-200, -50)
-        # base speed is 0.1
-        self.speed = random.random() + 0.3
+        # base speed is 0.3
+        self.speed = random.random() + Enemy.base_speed
+        self.life = Enemy.life
 
     def show(self):
         screen.blit(self.image, (self.x, self.y))
@@ -107,7 +111,9 @@ class Enemy:
 def check_hit(bullet, enemy):
     if (enemy.x <= bullet.x <= enemy.x + enemy.image.get_width()) and \
             (enemy.y <= bullet.y <= enemy.y + enemy.image.get_height()):
-        enemy.restart()
+        enemy.life -= 1
+        if enemy.life <= 0:
+            enemy.restart()
         # print("hitted",enemy)
         bullet.active = False
         return True
@@ -170,7 +176,7 @@ while True:
         if interval_b < 0:
             bullets[index_b].restart()
             """子弹冷却时间"""
-            interval_b = 15
+            interval_b = 25
             index_b = (index_b + 1) % count_b
         for b in bullets:
             if b.active:
