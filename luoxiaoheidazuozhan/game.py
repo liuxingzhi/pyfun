@@ -46,10 +46,16 @@ class Plane:
         self.gun.upgrade()
         if self.level == 3:
             self.gun = DoubleFireGun()
+        elif self.level == 4:
+            SingleStraightBullet.upgrade()
         elif self.level == 5:
             self.gun = TripleFireGun()
-        elif self.level >= 7:
+        elif self.level == 6:
+            SingleStraightBullet.upgrade()
+        elif self.level == 7:
             self.gun = QuaterFireGun()
+        elif self.level >= 8:
+            SingleStraightBullet.upgrade()
 
     def show(self):
         screen.blit(self.image, (self.x, self.y))
@@ -104,8 +110,9 @@ class SingleFireGun:
                     return
 
     def reload_all(self):
-        for bullet in self.barrels:
-            bullet.active = False
+        for bullets in self.barrels:
+            for b in bullets:
+                b.active = False
 
     def increase_capacity(self):
         self.bullet_capacity += 1
@@ -145,6 +152,8 @@ class QuaterFireGun(SingleFireGun):
 
 
 class SingleStraightBullet:
+    damage = 1
+
     def __init__(self):
         self.x = 300
         self.y = 600
@@ -162,14 +171,13 @@ class SingleStraightBullet:
         self.y = y
         self.active = True
 
-    def upgrade(self):
-        pass
+    @staticmethod
+    def upgrade():
+        SingleStraightBullet.damage *= 1.5
 
     def show(self):
         if self.active:
             screen.blit(self.image, (self.x, self.y))
-        else:
-            pass
 
     def __str__(self):
         return "x is {x}, y is {y}, active is {active}".format(x=self.x, y=self.y, active=self.active)
@@ -210,7 +218,7 @@ class RightObliqueBullet(RightStraightBullet):
 class Enemy:
     count = 1
     life = 2
-    base_speed = 0.0
+    base_speed = 0.2
 
     def __init__(self):
         image = pygame.image.load(enemy_img).convert_alpha()
@@ -250,7 +258,7 @@ class Enemy:
 def check_hit(bullet, enemy):
     if (enemy.x <= bullet.x <= enemy.x + enemy.image.get_width()) and \
             (enemy.y <= bullet.y <= enemy.y + enemy.image.get_height()):
-        enemy.life -= 1
+        enemy.life -= SingleStraightBullet.damage
         if enemy.life <= 0:
             enemy.restart()
             global score, level
