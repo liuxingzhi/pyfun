@@ -9,19 +9,24 @@ import random
 from sys import exit
 import os
 
-os.chdir('imgs')
-my_plane_img = '小黑.jpg'
-background_img = '罗小黑战记.jpg'
-enemy_img = '黄受.jpg'
-bullet_img = 'bullet.jpg'
+pygame.init()
+screen = pygame.display.set_mode((450, 800), 0, 32)
 game_name = "罗小黑大作战"
-boss_img = "boss.jpg"
+pygame.display.set_caption(game_name)
+os.chdir('imgs')
+
+# background = pygame.transform.scale(pygame.image.load('罗小黑战记.jpg').convert(), (450, 800))
+# my_plane_img = pygame.transform.scale(pygame.image.load('小黑.jpg').convert_alpha(), (60, 60))
+# enemy_img = pygame.transform.scale(pygame.image.load('黄受.jpg').convert_alpha(), (60, 60))
+background = pygame.transform.scale(pygame.image.load('cs125.jpg').convert(), (450, 800))
+my_plane_img = pygame.transform.scale(pygame.image.load('petwings.jpg').convert_alpha(), (60, 60))
+enemy_img = pygame.transform.scale(pygame.image.load('octopus.png').convert_alpha(), (60, 60))
+bullet_img = pygame.image.load('bullet.jpg').convert_alpha()
 
 
 class Plane:
     def __init__(self):
-        image = pygame.image.load(my_plane_img).convert_alpha()
-        self.image = pygame.transform.scale(image, (60, 60))
+        self.image = my_plane_img
         w, h = pygame.display.get_surface().get_size()
         self.x = w / 2
         self.y = h / 2
@@ -157,7 +162,7 @@ class SingleStraightBullet:
     def __init__(self):
         self.x = 300
         self.y = 600
-        self.image = pygame.image.load(bullet_img).convert_alpha()
+        self.image = bullet_img
         self.active = False
 
     def move(self):
@@ -173,7 +178,7 @@ class SingleStraightBullet:
 
     @staticmethod
     def upgrade():
-        SingleStraightBullet.damage *= 1.5
+        SingleStraightBullet.damage *= 1.75
 
     def show(self):
         if self.active:
@@ -221,8 +226,7 @@ class Enemy:
     base_speed = 0.2
 
     def __init__(self):
-        image = pygame.image.load(enemy_img).convert_alpha()
-        self.image = pygame.transform.scale(image, (60, 60))
+        self.image = enemy_img
         self.x = 0
         self.y = 0
         self.speed = 0.3
@@ -275,13 +279,6 @@ def check_crash(plane, enemy):
         return True
     return False
 
-
-pygame.init()
-screen = pygame.display.set_mode((450, 800), 0, 32)
-pygame.display.set_caption(game_name)
-
-image = pygame.image.load(background_img).convert()
-background = pygame.transform.scale(image, (450, 800))
 
 enemies = []
 for i in range(5):
