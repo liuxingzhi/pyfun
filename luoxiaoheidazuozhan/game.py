@@ -13,19 +13,24 @@ pygame.init()
 screen = pygame.display.set_mode((450, 800), 0, 32)
 game_name = "罗小黑大作战"
 pygame.display.set_caption(game_name)
+
+font = pygame.font.Font('my_font.ttf', 32)
+font_over = pygame.font.Font('my_font.ttf', 64)
+
 os.chdir('imgs')
 
 # background = pygame.transform.scale(pygame.image.load('罗小黑战记.jpg').convert(), (450, 800))
 # my_plane_img = pygame.transform.scale(pygame.image.load('小黑.jpg').convert_alpha(), (60, 60))
 # enemy_img = pygame.transform.scale(pygame.image.load('黄受.jpg').convert_alpha(), (60, 60))
-background = pygame.transform.scale(pygame.image.load('cs125.jpg').convert(), (450, 800))
-my_plane_img = pygame.transform.scale(pygame.image.load('petwings.png').convert_alpha(), (60, 60))
-enemy_img = pygame.transform.scale(pygame.image.load('octopus.png').convert_alpha(), (60, 60))
+background = pygame.transform.scale(pygame.image.load('background.jpg').convert(), (450, 800))
+my_plane_img = pygame.transform.scale(pygame.image.load('petwings.jpg').convert_alpha(), (60, 60))
+enemy_img = pygame.transform.scale(pygame.image.load('octopus.jpg').convert_alpha(), (60, 60))
 bullet_img = pygame.image.load('bullet.jpg').convert_alpha()
-boss_bullet_img = pygame.image.load('blue_bullet.png').convert_alpha()
-boss_img = pygame.transform.scale(pygame.image.load('bunblebee.png').convert_alpha(), (300, 200))
-strong_enemy = pygame.transform.scale(pygame.image.load('owl.png').convert_alpha(), (85, 50))
-win_img = pygame.image.load('win.jpg').convert()
+boss_bullet_img = pygame.image.load('blue_bullet.jpg').convert_alpha()
+boss_img = pygame.transform.scale(pygame.image.load('bunblebee.jpg').convert_alpha(), (300, 200))
+strong_enemy = pygame.transform.scale(pygame.image.load('owl.jpg').convert_alpha(), (85, 50))
+win_img = pygame.transform.scale(pygame.image.load('win.jpg').convert_alpha(), (420, 280))
+lose_img = pygame.image.load('lose.jpg').convert_alpha()
 
 screen_width, screen_height = pygame.display.get_surface().get_size()
 
@@ -39,7 +44,7 @@ class Plane:
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         self.level = 1
-        self.gun = HexaFireGun()
+        self.gun = SingleFireGun()
 
     def move(self):
         x, y = pygame.mouse.get_pos()
@@ -70,7 +75,6 @@ class Plane:
             enemies.append(Boss())
         elif self.level == 6:
             self.gun = HexaFireGun(initial_capacity=self.level + 1)
-
 
     def reset(self):
         self.level = 1
@@ -134,7 +138,7 @@ class SingleFireGun:
 
 
 class DoubleFireGun(SingleFireGun):
-    def __init__(self,initial_capacity=3):
+    def __init__(self, initial_capacity=3):
         SingleFireGun.__init__(self, initial_capacity=initial_capacity)
 
     def increase_capacity(self):
@@ -143,7 +147,7 @@ class DoubleFireGun(SingleFireGun):
 
 
 class TripleFireGun(SingleFireGun):
-    def __init__(self,initial_capacity=4):
+    def __init__(self, initial_capacity=4):
         SingleFireGun.__init__(self, initial_capacity=initial_capacity)
 
     def increase_capacity(self):
@@ -153,7 +157,7 @@ class TripleFireGun(SingleFireGun):
 
 
 class QuadraFireGun(SingleFireGun):
-    def __init__(self,initial_capacity=5):
+    def __init__(self, initial_capacity=5):
         SingleFireGun.__init__(self, initial_capacity=initial_capacity)
 
     def increase_capacity(self):
@@ -163,7 +167,7 @@ class QuadraFireGun(SingleFireGun):
 
 
 class HexaFireGun(SingleFireGun):
-    def __init__(self,initial_capacity=6):
+    def __init__(self, initial_capacity=6):
         SingleFireGun.__init__(self, initial_capacity=initial_capacity)
 
     def increase_capacity(self):
@@ -194,7 +198,8 @@ class BossGun():
                     global plane
                     if b.check_hit(plane):
                         b.active = False
-                        global game_over
+                        global game_over, you_win
+                        you_win = False
                         game_over = True
                     b.move()
                     b.show()
@@ -486,8 +491,6 @@ plane = Plane()
 game_over = False
 you_win = False
 score = 0
-font = pygame.font.Font(None, 32)
-font_over = pygame.font.Font(None, 64)
 
 threshold = 1000
 game_level = 1
@@ -541,6 +544,7 @@ while True:
             e.show()
         plane.move()
         plane.show()
+        score = int(score)
         text = font.render("Score: {score}".format(score=score), 1, (0, 0, 0))
         screen.blit(text, (0, 0))
         if score >= threshold:
@@ -552,19 +556,35 @@ while True:
         clock.tick(250)
 
     elif you_win:
-        score = int(score)
-        text_win = font_over.render("You win!", 1, (0, 0, 0))
-        text_score = font_over.render("Score: {score}".format(score=score), 1, (0, 0, 0))
         w, h = pygame.display.get_surface().get_size()
-        screen.blit(win_img, (w / 24, h / 4))
-        screen.blit(text_score, (w / 4, h / 5))
+        screen.blit(win_img, (w / 2 - win_img.get_width() / 2, h / 4))
+        score = int(score)
+        text_score = font_over.render("Score: {score}".format(score=score), 1, (0, 0, 0))
+        score_text_length = text_score.get_width()
+        screen.blit(text_score, (w / 2 - score_text_length / 2, h / 6))
+
+        for e in enemies:
+            if e.life > 0:
+                if check_crash(plane, e):
+                    game_over = True
+                    you_win = False
+                e.show()
+            if isinstance(e, Boss):
+                e.gun.show_fire()
+        if plane_fired:
+            plane.fire()
+        plane.gun.show_fire()
+        plane.move()
+        plane.show()
 
     else:
         # show score
+        w, h = pygame.display.get_surface().get_size()
+        screen.blit(lose_img, (w / 2 - lose_img.get_width() / 2, h / 3.5))
         score = int(score)
         text_score = font_over.render("Score: {score}".format(score=score), 1, (0, 0, 0))
-        w, h = pygame.display.get_surface().get_size()
-        screen.blit(text_score, (w / 4, h / 5))
+        score_text_length = text_score.get_width()
+        screen.blit(text_score, (w / 2 - score_text_length / 2, h / 6))
 
     pygame.mouse.set_visible(False)
     pygame.display.update()
