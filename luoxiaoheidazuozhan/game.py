@@ -11,7 +11,7 @@ import os
 
 pygame.init()
 screen = pygame.display.set_mode((450, 800), 0, 32)
-game_name = "罗小黑大作战"
+game_name = "虫族入侵大作战"
 pygame.display.set_caption(game_name)
 
 font = pygame.font.Font('my_font.ttf', 32)
