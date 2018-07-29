@@ -1,7 +1,7 @@
 # luoxiaoheidazuozhan
 
 
-A Python Shooting Game 
+<h6>A Python Shooting Game </h6>
 
 <section>
 <strong>Intro:</strong>
@@ -11,7 +11,7 @@ The only way to win is to destroy the bee queen. If the boss die, enemies cannot
 </p>
 <br>
 <p>
-  instruction:
+  <strong>instruction:</strong>
   <ul>
   <li>control yourself using mouse, press space key to fire </li>
   <li>you can upgrade yourself by winning points </li>
@@ -24,7 +24,7 @@ The only way to win is to destroy the bee queen. If the boss die, enemies cannot
 </section>
 <br><br>
 <section>
-  installion/requirement:
+  <strong>installion/requirement:</strong>
   <ul>
   <li>python3.6+ </li>
   <li>pygame2.0+ </li>
