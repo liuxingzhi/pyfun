@@ -178,7 +178,7 @@ class HexaFireGun(SingleFireGun):
 
 
 class BossGun():
-    def __init__(self, initial_capacity=20, cd=500):
+    def __init__(self, initial_capacity=20, cd=125):
         self.cd = cd
         self.interval_b = cd
         self.initial_capacity = initial_capacity
@@ -213,12 +213,12 @@ class BossGun():
                     if b.active:
                         flying = True
                 if not flying:
-                    bullets[0].restart(x, y, x_speed=-0.2, y_speed=-0.2)
-                    bullets[1].restart(x, y, x_speed=-0.1, y_speed=-0.2)
-                    bullets[2].restart(x, y, x_speed=0.0, y_speed=-0.2)
-                    bullets[3].restart(x, y, x_speed=0.0, y_speed=-0.2)
-                    bullets[4].restart(x, y, x_speed=0.1, y_speed=-0.2)
-                    bullets[5].restart(x, y, x_speed=0.2, y_speed=-0.2)
+                    bullets[0].restart(x, y, x_speed=-0.8, y_speed=-0.8)
+                    bullets[1].restart(x, y, x_speed=-0.4, y_speed=-0.8)
+                    bullets[2].restart(x, y, x_speed=0.0, y_speed=-0.8)
+                    bullets[3].restart(x, y, x_speed=0.0, y_speed=-0.8)
+                    bullets[4].restart(x, y, x_speed=0.4, y_speed=-0.8)
+                    bullets[5].restart(x, y, x_speed=0.8, y_speed=-0.8)
                     self.interval_b = self.cd
                     return
 
@@ -256,7 +256,7 @@ class SingleStraightBullet(Bullet):
 
     def move(self):
         if self.active:
-            self.y -= 2.5
+            self.y -= 10.0
         if self.y < 0:
             self.active = False
 
@@ -300,8 +300,8 @@ class RightStraightBullet(SingleStraightBullet):
 class LeftObliqueBullet(LeftStraightBullet):
     def move(self):
         if self.active:
-            self.y -= 2.2
-            self.x -= 0.5
+            self.y -= 8.8
+            self.x -= 2.0
         if self.y < 0 or self.x < 0:
             self.active = False
 
@@ -309,8 +309,8 @@ class LeftObliqueBullet(LeftStraightBullet):
 class SecondLeftObliqueBullet(LeftStraightBullet):
     def move(self):
         if self.active:
-            self.y -= 2.0
-            self.x -= 0.75
+            self.y -= 8.0
+            self.x -= 3.0
         if self.y < 0 or self.x < 0:
             self.active = False
 
@@ -318,8 +318,8 @@ class SecondLeftObliqueBullet(LeftStraightBullet):
 class RightObliqueBullet(RightStraightBullet):
     def move(self):
         if self.active:
-            self.y -= 2.2
-            self.x += 0.5
+            self.y -= 8.8
+            self.x += 2.0
         if self.y < 0 or self.x > screen.get_width():
             self.active = False
 
@@ -327,8 +327,8 @@ class RightObliqueBullet(RightStraightBullet):
 class SecondRightObliqueBullet(RightStraightBullet):
     def move(self):
         if self.active:
-            self.y -= 2.0
-            self.x += 0.75
+            self.y -= 8.0
+            self.x += 3.0
         if self.y < 0 or self.x < 0:
             self.active = False
 
@@ -337,11 +337,11 @@ class BossBullet(Bullet):
     def __init__(self):
         Bullet.__init__(self)
         self.image = boss_bullet_img
-        self.x_speed = 0
-        self.y_speed = 0
+        self.x_speed = 0.4
+        self.y_speed = 0.4
         self.active = False
 
-    def restart(self, x, y, x_speed=0.1, y_speed=0.1):
+    def restart(self, x, y, x_speed=0.4, y_speed=0.4):
         self.x = x
         self.y = y
         self.x_speed = x_speed
@@ -367,8 +367,8 @@ class BossBullet(Bullet):
 
 class Enemy:
     count = 1
-    life_max = 1
-    base_speed = 0.2
+    life_max = 2
+    base_speed = 0.8
 
     def __init__(self):
         self.score_reward = 100
@@ -377,8 +377,8 @@ class Enemy:
         self.height = self.image.get_height()
         self.x = 0
         self.y = 0
-        self.y_speed = 0.2
-        self.x_speed = 0.2
+        self.y_speed = 0.8
+        self.x_speed = 0.8
         self.life = Enemy.life_max
         self.id = Enemy.count
         self.restart()
@@ -394,7 +394,7 @@ class Enemy:
         self.x = random.randint(50, 400)
         self.y = random.randint(-200, -50)
         # base speed is 0.3
-        self.y_speed = random.random() + Enemy.base_speed
+        self.y_speed = random.random()*4 + Enemy.base_speed
         self.x_speed = Enemy.base_speed
         self.life = Enemy.life_max
 
@@ -442,9 +442,9 @@ class Boss:
         self.x = 0.5 * screen_width - 0.5 * self.width
         self.score_reward = 15000
         self.life = 2000
-        self.x_speed = 0.2
-        self.y_speed = 0.2
-        self.is_alife = True
+        self.x_speed = 0.8
+        self.y_speed = 0.8
+        self.is_alive = True
         self.gun = BossGun(initial_capacity=10)
 
     def fire(self):
@@ -461,12 +461,12 @@ class Boss:
             self.x += self.x_speed
 
     def restart(self):
-        self.is_alife = False
+        self.is_alive = False
         self.height = 0
         self.width = 0
 
     def show(self):
-        if self.is_alife:
+        if self.is_alive:
             screen.blit(self.image, (self.x, self.y))
 
     def __str__(self):
@@ -497,6 +497,7 @@ game_level = 1
 # control the frame rate
 clock = pygame.time.Clock()
 while True:
+    clock.tick(60)
     plane_fired = False
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
@@ -533,7 +534,7 @@ while True:
             if check_crash(plane, e):
                 game_over = True
             if isinstance(e, Boss):
-                if e.is_alife:
+                if e.is_alive:
                     e.fire()
                     e.gun.show_fire()
                 else:
@@ -553,7 +554,6 @@ while True:
             enemies.append(StrongEnemy())
             plane.upgrade()
             game_level += 1
-        clock.tick(250)
 
     elif you_win:
         w, h = pygame.display.get_surface().get_size()
