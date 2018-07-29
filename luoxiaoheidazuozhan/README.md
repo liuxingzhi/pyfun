@@ -12,7 +12,7 @@
 </section>
 <br>
 <section>
-    <strong>instruction:</strong>
+    <strong>Instruction:</strong>
     <ul>
     <li>control yourself using mouse, press space key to fire </li>
     <li>you can upgrade yourself by winning points </li>
@@ -24,7 +24,7 @@
 </section>
 <br>
 <section>
-  <strong>installion/requirement:</strong>
+  <strong>Installion/Requirement:</strong>
   <ul>
   <li>python3.6+ </li>
   <li>pygame2.0+ </li>
@@ -35,7 +35,7 @@
 </section>
 <br>
 <section>
-  <strong>how to play:</strong>
+  <strong>How to Play:</strong>
   <p>to run the game, use following commands:</p>
   <ul>
     <li>
