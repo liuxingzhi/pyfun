@@ -36,7 +36,7 @@
 <br><br>
 <section>
   <strong>how to play:</strong>
-  <p> to run the game, use following commands:</p>
+  <p>&nbsp&nbsp to run the game, use following commands:</p>
   <ul>
     <li>
       on Windows: python game.py 
