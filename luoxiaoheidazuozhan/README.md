@@ -10,7 +10,7 @@
   The only way to win is to destroy the bee queen. If the boss die, enemies cannot reborn and lose their mobility. Try your best!
   </p>
 </section>
-<br><br>
+<br>
 <section>
     <strong>instruction:</strong>
     <ul>
@@ -22,7 +22,7 @@
     <li>you will die if touched by enemy or hit by boss' bullet </li>
     </ul>
 </section>
-<br><br>
+<br>
 <section>
   <strong>installion/requirement:</strong>
   <ul>
@@ -33,10 +33,10 @@
     to install pygame, run "pip install pygame" in terminal
   </p>
 </section>
-<br><br>
+<br>
 <section>
   <strong>how to play:</strong>
-  <p>&nbsp&nbsp to run the game, use following commands:</p>
+  <p>to run the game, use following commands:</p>
   <ul>
     <li>
       on Windows: python game.py 
