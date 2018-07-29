@@ -23,7 +23,8 @@ The only way to win is to destroy the bee queen. If the boss die, enemies cannot
 <br>
 <p>
   installion/requirement:<br>
-  pygame <br>
+  python3.6+ <br>
+  pygame2.0+ <br>
   <br>
   to install pygame, run "pip install pygame" <br>
   <br>
