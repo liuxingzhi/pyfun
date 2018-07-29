@@ -1,7 +1,9 @@
 # luoxiaoheidazuozhan
 
+
 A Python Shooting Game 
 
+<section>
 Intro:
 <p>
   The Zerg are invading, enemies from Zerg are reproduced very quickly, and they will become more and more strong as time pass.
@@ -19,19 +21,19 @@ The only way to win is to destroy the bee queen. If the boss die, enemies cannot
   <li>you will die if touched by enemy or hit by boss' bullet </li>
   </ul>
 </p>
+</section>
 
-<br>
-<p>
+<section>
   installion/requirement:
   <ul>
   <li>python3.6+ </li>
   <li>pygame2.0+ </li>
   </ul>
-  <br>
-  to install pygame, run "pip install pygame" in terminal<br>
-  <br>
 
+  to install pygame, run "pip install pygame" in terminal
   <br>
+  to run the game, use following commands:
+  
   <ul>
     <li>
       on Windows: python game.py 
@@ -40,4 +42,4 @@ The only way to win is to destroy the bee queen. If the boss die, enemies cannot
       on Mac: pythonw game.py 
     </li>
   </ul>
-</p>
+</section>
