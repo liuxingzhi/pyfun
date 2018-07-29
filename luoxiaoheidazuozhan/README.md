@@ -8,7 +8,7 @@ Intro:
   The Zerg are invading, enemies from Zerg are reproduced very quickly, and they will become more and more strong as time pass.
 The only way to win is to destroy the bee queen. If the boss die, enemies cannot reborn and lose their mobility. Try your best!
 </p>
-
+<br>
 <p>
   instruction:
 
@@ -20,6 +20,7 @@ The only way to win is to destroy the bee queen. If the boss die, enemies cannot
   you will die if touched by enemy or hit by boss' bullet <br>
 </p>
 
+<br>
 <p>
   installion/requirement:
   pygame <br>
