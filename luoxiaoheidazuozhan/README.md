@@ -4,7 +4,7 @@
 A Python Shooting Game 
 
 <section>
-Intro:
+<strong>Intro:</strong>
 <p>
   The Zerg are invading, enemies from Zerg are reproduced very quickly, and they will become more and more strong as time pass.
 The only way to win is to destroy the bee queen. If the boss die, enemies cannot reborn and lose their mobility. Try your best!
