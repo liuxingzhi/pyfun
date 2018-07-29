@@ -11,20 +11,23 @@ The only way to win is to destroy the bee queen. If the boss die, enemies cannot
 <br>
 <p>
   instruction:
-
-  control yourself using mouse, press space key to fire <br>
-  you can upgrade yourself by winning points <br>
-  gain one point for each bullet hitting enemy <br>
-  gain different points according to your level and enemy type<br>
-  gain bonus porints from destroying the boss <br>
-  you will die if touched by enemy or hit by boss' bullet <br>
+  <ul>
+  <li>control yourself using mouse, press space key to fire </li>
+  <li>you can upgrade yourself by winning points </li>
+  <li>gain one point for each bullet hitting enemy </li>
+  <li>gain different points according to your level and enemy type </li>
+  <li>gain bonus porints from destroying the boss </li>
+  <li>you will die if touched by enemy or hit by boss' bullet </li>
+  </ul>
 </p>
 
 <br>
 <p>
-  installion/requirement:<br>
-  python3.6+ <br>
-  pygame2.0+ <br>
+  installion/requirement:
+  <ul>
+  <li>python3.6+ </li>
+  <li>pygame2.0+ </li>
+  </ul>
   <br>
   to install pygame, run "pip install pygame" <br>
   <br>
