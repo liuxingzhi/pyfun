@@ -1,9 +1,8 @@
 # luoxiaoheidazuozhan
 
-Python Game 
+A Python Shooting Game 
 
 Intro:
-
 <p>
   The Zerg are invading, enemies from Zerg are reproduced very quickly, and they will become more and more strong as time pass.
 The only way to win is to destroy the bee queen. If the boss die, enemies cannot reborn and lose their mobility. Try your best!
@@ -31,8 +30,13 @@ The only way to win is to destroy the bee queen. If the boss die, enemies cannot
   <br>
   to install pygame, run "pip install pygame" <br>
   <br>
-  to run the game <br>
-  on Windows: python game.py <br>
-  <br>
-  on Mac: pythonw game.py <br>
+  to run the game
+  <ul>
+    <li>
+      on Windows: python game.py 
+    </li>
+    <li>
+      on Mac: pythonw game.py 
+    </li>
+  </ul>
 </p>
