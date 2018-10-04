@@ -1,6 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 !.gitignore
-.pdf
+/ElectricField/*.pdf
+/fractals
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
