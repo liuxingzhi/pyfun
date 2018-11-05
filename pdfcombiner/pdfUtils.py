@@ -1,4 +1,5 @@
-import os, stat
+import os
+import stat
 import codecs
 import os.path
 from PyPDF2 import PdfFileReader, PdfFileWriter, PdfFileMerger

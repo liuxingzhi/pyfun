@@ -177,7 +177,7 @@ class HexaFireGun(SingleFireGun):
         self.barrels.append(bullets_tuple)
 
 
-class BossGun():
+class BossGun:
     def __init__(self, initial_capacity=20, cd=125):
         self.cd = cd
         self.interval_b = cd

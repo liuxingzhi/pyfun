@@ -1,6 +1,6 @@
 import itchat
 from itchat.content import *
-from wechatRobot.crawlers import *
+from crawlers import *
 import re
 
 """key:id, value:状态码
@@ -76,7 +76,7 @@ def text_reply(msg):
                         # else:
                         #     result = tuling_response(text)
                         #     if result == "我不会说英语的啦，你还是说中文吧。":
-                        #         result = goole_translate(result)
+                        #         result = google_translate(result)
             user_status_dict[receiver_id] += 1
             print("返回结果", result, "\n")
             itchat.send(result, receiver_id)
@@ -130,7 +130,7 @@ def text_reply(msg):
                     else:
                         result = tuling_response(text)
                         if result == "我不会说英语的啦，你还是说中文吧。":
-                            result = goole_translate(result)
+                            result = google_translate(result)
             user_status_dict[sender_id] += 1
             print("返回结果", result, "\n")
             itchat.send(result, sender_id)

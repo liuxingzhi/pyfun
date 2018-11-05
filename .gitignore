@@ -1,7 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 !.gitignore
 /ElectricField/*.pdf
-/fractals
+/multi_processing_fractals
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -111,7 +111,7 @@ venv.bak/
 .gitignore
 .idea/inspectionProfiles/
 ElectricField/2+VP+E+of+charged+rod+2018.pdf
-fractals/
+multi_processing_fractals/
 luoxiaoheidazuozhan/.idea/
 luoxiaoheidazuozhan/__pycache__/
 ### JetBrains template
