@@ -5,6 +5,7 @@ import os.path
 from PyPDF2 import PdfFileReader, PdfFileWriter, PdfFileMerger
 import time
 import img2pdf
+import sys
 
 
 def timeit(func):
@@ -21,7 +22,9 @@ def timeit(func):
 
 
 def get_pdf_names(path):
+    """first convert all imgs to corresponding pdfs"""
     all_pictures2pdf(path, fixed_size=True)
+
     """walk can recursively list sub directories"""
     for root, dirs, files in os.walk(path):
         files.sort()
@@ -52,7 +55,7 @@ def all_pictures2pdf(path, fixed_size=False):
 def merge_pdf(path, output_filename):
     if os.path.exists(output_filename):
         os.remove(output_filename)
-    os.chmod(path, stat.S_IRWXU)
+    os.chmod(path, stat.S_IRWXU)  # ensure we have permission
     output_pdf = PdfFileMerger()
     output_page_num = 0
     for pdf_name in get_pdf_names(path):
@@ -74,7 +77,16 @@ def merge_pdf(path, output_filename):
     print("mission complete")
 
 
+def print_usage():
+    print("usage: python <directory_name> <combined.pdf>")
+
+
 if __name__ == '__main__':
     # print("\n".join(get_file_name('.')))
     # print(os.listdir('.'))
-    merge_pdf("imgs", "combine.pdf")
+    if len(sys.argv) == 1:
+        merge_pdf("ling_exam2", "ling_combine.pdf")
+    elif len(sys.argv) == 3:
+        merge_pdf(sys.argv[1], sys.argv[2])
+    else:
+        print_usage()
