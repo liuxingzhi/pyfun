@@ -122,9 +122,8 @@ class SingleFireGun:
                     b.restart(mouse_x, mouse_y)
                 return
 
-    """填充所有子弹，不论子弹状态"""
-
     def reload_all(self):
+        """填充所有子弹，不论子弹状态"""
         for bullets in self.barrels:
             for b in bullets:
                 b.active = False
@@ -394,7 +393,7 @@ class Enemy:
         self.x = random.randint(50, 400)
         self.y = random.randint(-200, -50)
         # base speed is 0.3
-        self.y_speed = random.random()*4 + Enemy.base_speed
+        self.y_speed = random.random() * 4 + Enemy.base_speed
         self.x_speed = Enemy.base_speed
         self.life = Enemy.life_max
 
