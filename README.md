@@ -1,7 +1,7 @@
 # pyfun
 when an inspiration comes, write a python program
 
-####program list:
+#### program list:
   - ***Electric field***: draw electric field of an electrical bar in canvas in browser using vpython
   - ***luoxiaoheidazuozhan***: a funny shooting game written in python, pygame module, game instructions are inside its directory
   - ***snow***: add the effect of snowing to your picture using pygame, it is beautiful
