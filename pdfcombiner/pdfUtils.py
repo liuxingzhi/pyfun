@@ -52,26 +52,33 @@ def all_pictures2pdf(path, fixed_size=False):
 
 
 @timeit
-def merge_pdf(path, output_filename):
+def merge_pdf(path, output_filename, bookmark_separator="", bookmark_start_index=1, password=""):
+    """
+    合并一个文件里所有的pdf
+    :param path: 文件夹路径
+    :param output_filename: 输出文件名(包含路径)
+    :param bookmark_separator: 用来分割每一个pdf的书签格式，会自动给你添加后缀
+    :bookmark_start_index: 书签后缀开始的序号
+    :password: 如果pdf有加密，这里填pdf的密码
+    :return:
+    """
     if os.path.exists(output_filename):
         os.remove(output_filename)
     os.chmod(path, stat.S_IRWXU)  # ensure we have permission
     output_pdf = PdfFileMerger()
     output_page_num = 0
-    for pdf_name in get_pdf_names(path):
-        print(pdf_name)
-        with open(pdf_name, "rb") as pdf:
+    for index, pdf_path_with_name in enumerate(get_pdf_names(path), bookmark_start_index):
+        print(pdf_path_with_name)
+        with open(pdf_path_with_name, "rb") as pdf:
             content = PdfFileReader(pdf)
+            if content.isEncrypted:
+                content.decrypt(password)
+            # add bookmark at the beginning of each merged pdf if bookmark_separator is not None
+            if bookmark_separator:
+                output_pdf.addBookmark(bookmark_separator + str(index), output_page_num)
             output_pdf.append(content)
-            # content = PdfFileReader(pdf)
-            # if content.isEncrypted:
-            #     password = "password"
-            #     content.decrypt(password)
-            #
-            # output_page_num += content.numPages
-            #
-            # for i in range(content.numPages):
-            #     output_pdf.addPage(content.getPage(i))
+            output_page_num += content.numPages
+
     with codecs.open(output_filename, "wb") as f:
         output_pdf.write(f)
     print("mission complete")
@@ -85,7 +92,7 @@ if __name__ == '__main__':
     # print("\n".join(get_file_name('.')))
     # print(os.listdir('.'))
     if len(sys.argv) == 1:
-        merge_pdf("ling_exam2", "ling_combine.pdf")
+        merge_pdf("temp", "415_lecture_notes_combined.pdf", bookmark_separator="L")
     elif len(sys.argv) == 3:
         merge_pdf(sys.argv[1], sys.argv[2])
     else:
