@@ -34,7 +34,7 @@ def get_pdf_names(path):
 
 
 def get_picture_names(path):
-    img_extensions = [".jpg", ".png"]
+    img_extensions = [".jpg", ".png", ".jpeg"]
     for root, dirs, files in os.walk(path):
         for file_name in files:
             if os.path.splitext(file_name)[1].lower() in img_extensions:
@@ -92,7 +92,7 @@ if __name__ == '__main__':
     # print("\n".join(get_file_name('.')))
     # print(os.listdir('.'))
     if len(sys.argv) == 1:
-        merge_pdf("temp", "415_lecture_notes_combined.pdf", bookmark_separator="L")
+        merge_pdf("357final", "357鸡精3.pdf", bookmark_separator="P")
     elif len(sys.argv) == 3:
         merge_pdf(sys.argv[1], sys.argv[2])
     else:
