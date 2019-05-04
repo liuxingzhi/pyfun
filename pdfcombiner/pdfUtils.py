@@ -44,7 +44,8 @@ def get_picture_names(path):
 def all_pictures2pdf(path, fixed_size=False):
     # specify paper size (A4)
     a4inpt = (img2pdf.mm_to_pt(210), img2pdf.mm_to_pt(297))
-    layout_fun = img2pdf.get_layout_fun(a4inpt) if fixed_size else img2pdf.get_layout_fun()
+    layout_fun = img2pdf.get_layout_fun(a4inpt, auto_orient=True) if fixed_size else img2pdf.get_layout_fun(
+        auto_orient=True)
     for pic_name in get_picture_names(path):
         pdf_name = pic_name[:-4] + ".pdf"
         with open(pdf_name, "wb") as pdf:
@@ -84,6 +85,26 @@ def merge_pdf(path, output_filename, bookmark_separator="", bookmark_start_index
     print("mission complete")
 
 
+def rotate_pdf(input_filename, output_filename, degree, dir='.'):
+    pdf_in = open(input_filename, 'rb')
+    pdf_reader = PdfFileReader(pdf_in)
+    pdf_writer = PdfFileWriter()
+
+    for pagenum in range(pdf_reader.numPages):
+        page = pdf_reader.getPage(pagenum)
+        page.rotateClockwise(degree)
+        pdf_writer.addPage(page)
+
+    if os.path.exists(output_filename):
+        os.remove(output_filename)
+    os.chmod(dir, stat.S_IRWXU)  # ensure we have permission
+
+    pdf_out = open(output_filename, 'wb')
+    pdf_writer.write(pdf_out)
+    pdf_out.close()
+    pdf_in.close()
+
+
 def print_usage():
     print("usage: python <directory_name> <combined.pdf>")
 
@@ -92,8 +113,9 @@ if __name__ == '__main__':
     # print("\n".join(get_file_name('.')))
     # print(os.listdir('.'))
     if len(sys.argv) == 1:
-        merge_pdf("357final", "357鸡精3.pdf", bookmark_separator="P")
+        merge_pdf("imgs", "imgs_output.pdf", bookmark_separator="P")
     elif len(sys.argv) == 3:
         merge_pdf(sys.argv[1], sys.argv[2])
     else:
         print_usage()
+    # rotate_pdf("357鸡精3.pdf","357鸡精3.pdf",180)
