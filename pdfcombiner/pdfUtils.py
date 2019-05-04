@@ -36,6 +36,7 @@ def get_pdf_names(path):
 def get_picture_names(path):
     img_extensions = [".jpg", ".png", ".jpeg"]
     for root, dirs, files in os.walk(path):
+        files.sort()
         for file_name in files:
             if os.path.splitext(file_name)[1].lower() in img_extensions:
                 yield os.path.join(root, file_name)
@@ -112,10 +113,12 @@ def print_usage():
 if __name__ == '__main__':
     # print("\n".join(get_file_name('.')))
     # print(os.listdir('.'))
+    dir = "357final"
+    output_name = "357finalReview.pdf"
     if len(sys.argv) == 1:
-        merge_pdf("imgs", "imgs_output.pdf", bookmark_separator="P")
+        merge_pdf(dir, output_name, bookmark_separator="P")
     elif len(sys.argv) == 3:
         merge_pdf(sys.argv[1], sys.argv[2])
     else:
         print_usage()
-    # rotate_pdf("357鸡精3.pdf","357鸡精3.pdf",180)
+    # rotate_pdf(output_name, output_name, 90)
