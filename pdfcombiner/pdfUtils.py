@@ -29,7 +29,7 @@ def get_pdf_names(path):
     for root, dirs, files in os.walk(path):
         files.sort()
         for file_name in files:
-            if os.path.splitext(file_name)[1].lower() == ".pdf":
+            if os.path.splitext(file_name)[-1].lower() == ".pdf":
                 yield os.path.join(root, file_name)
 
 
@@ -76,6 +76,8 @@ def merge_pdf(path, output_filename, bookmark_separator="", bookmark_start_index
             # add bookmark at the beginning of each merged pdf if bookmark_separator is not None
             if bookmark_separator:
                 output_pdf.addBookmark(bookmark_separator + str(index), output_page_num)
+            else:
+                output_pdf.addBookmark(pdf_path_with_name.split("/")[-1], output_page_num)
             output_pdf.append(content)
             output_page_num += content.numPages
 
@@ -92,7 +94,7 @@ if __name__ == '__main__':
     # print("\n".join(get_file_name('.')))
     # print(os.listdir('.'))
     if len(sys.argv) == 1:
-        merge_pdf("temp", "415_lecture_notes_combined.pdf", bookmark_separator="L")
+        merge_pdf("cs425", "425combined.pdf")
     elif len(sys.argv) == 3:
         merge_pdf(sys.argv[1], sys.argv[2])
     else:
