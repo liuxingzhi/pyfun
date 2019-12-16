@@ -516,7 +516,7 @@ class Boss(EnemyObject):
         self.y = 0
         self.x = 0.5 * screen_width - 0.5 * self.width
         self.score_reward = 15000
-        self.life = 200
+        self.life = 2000
         self.x_speed = 0.8
         self.y_speed = 0.8
         self.gun = BossGun(initial_capacity=10)
