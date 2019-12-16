@@ -6,19 +6,19 @@ import random
 
 pygame.init()
 
-SIZE = (450, 869)
-screen = pygame.display.set_mode(SIZE)
+SCREEN_SIZE = (450, 869)
+screen = pygame.display.set_mode(SCREEN_SIZE)
 pygame.display.set_caption("雪花飘飘")
 origin = pygame.image.load('xiaohei.jpg')
-bg = pygame.transform.scale(origin, (450, 869))
+bg = pygame.transform.scale(origin, SCREEN_SIZE)
 
 snow_list = []
 
 
 class Snowflake:
     def __init__(self):
-        self.x = random.randrange(0, SIZE[0])
-        self.y = random.randrange(0, SIZE[1])
+        self.x = random.randrange(0, SCREEN_SIZE[0])
+        self.y = random.randrange(0, SCREEN_SIZE[1])
         self.sx = random.randint(-1, 1)  # x speed
         self.sy = random.randint(3, 6)  # y speed
         self.r = random.randint(0, 3)
@@ -47,8 +47,8 @@ while True:
 
         snow.fly()
 
-        if snow.y > SIZE[1]:
-            snow.x = random.randrange(0, SIZE[0])
+        if snow.y > SCREEN_SIZE[1]:
+            snow.x = random.randrange(0, SCREEN_SIZE[0])
             snow.y = random.randrange(-50, -10)
 
     # update the contents of the entire display
