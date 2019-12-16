@@ -8,9 +8,11 @@ import pygame
 import random
 from sys import exit
 import os
+from typing import Union
 
 pygame.init()
-screen = pygame.display.set_mode((450, 800), 0, 32)
+SCREEN_SIZE = (450, 800)
+screen = pygame.display.set_mode(SCREEN_SIZE, 0, 32)
 game_name = "虫族入侵大作战"
 pygame.display.set_caption(game_name)
 
@@ -19,14 +21,14 @@ font_over = pygame.font.Font('my_font.ttf', 64)
 
 os.chdir('imgs')
 
-# background = pygame.transform.scale(pygame.image.load('罗小黑战记.jpg').convert(), (450, 800))
+# background = pygame.transform.scale(pygame.image.load('罗小黑战记.jpg').convert(), SCREEN_SIZE)
 # my_plane_img = pygame.transform.scale(pygame.image.load('小黑.jpg').convert_alpha(), (60, 60))
 # enemy_img = pygame.transform.scale(pygame.image.load('黄受.jpg').convert_alpha(), (60, 60))
-background = pygame.transform.scale(pygame.image.load('background.jpg').convert(), (450, 800))
+background = pygame.transform.scale(pygame.image.load('background.jpg').convert(), SCREEN_SIZE)
 my_plane_img = pygame.transform.scale(pygame.image.load('petwings.jpg').convert_alpha(), (60, 60))
 enemy_img = pygame.transform.scale(pygame.image.load('octopus.jpg').convert_alpha(), (60, 60))
-bullet_img = pygame.image.load('bullet.jpg').convert_alpha()
-boss_bullet_img = pygame.image.load('blue_bullet.jpg').convert_alpha()
+user_bullet_img = pygame.image.load('bullet.jpg').convert_alpha()  # size is (4,11)
+boss_bullet_img = pygame.image.load('blue_bullet.jpg').convert_alpha()  # size is (22,22)
 boss_img = pygame.transform.scale(pygame.image.load('bunblebee.jpg').convert_alpha(), (300, 200))
 strong_enemy = pygame.transform.scale(pygame.image.load('owl.jpg').convert_alpha(), (85, 50))
 win_img = pygame.transform.scale(pygame.image.load('win.jpg').convert_alpha(), (420, 280))
@@ -35,33 +37,67 @@ lose_img = pygame.image.load('lose.jpg').convert_alpha()
 screen_width, screen_height = pygame.display.get_surface().get_size()
 
 
-class Plane:
+class DisplayableObject:
+    image_object = None
+
+    @property
+    def image(self):
+        return type(self).image_object
+
+    @property
+    def width(self):
+        return type(self).image_object.get_width()
+
+    @property
+    def height(self):
+        return type(self).image_object.get_height()
+
+
+class MovingObject:
     def __init__(self):
-        self.image = my_plane_img
+        self.x = 0
+        self.y = 0
+
+    def move(self):
+        pass
+
+
+def check_collision(user_plane: Union[MovingObject, DisplayableObject],
+                    enemy: Union[MovingObject, DisplayableObject], scale_factor=0.7) -> bool:
+    return (user_plane.x + scale_factor * user_plane.width > enemy.x) and \
+           (user_plane.x + (1 - scale_factor) * user_plane.width < enemy.x + enemy.width) and \
+           (user_plane.y + scale_factor * user_plane.height > enemy.y) and \
+           (user_plane.y + (1 - scale_factor) * user_plane.height < enemy.y + enemy.height)
+
+
+class Plane(DisplayableObject, MovingObject):
+    image_object = my_plane_img
+
+    def __init__(self):
+        super(Plane, self).__init__()
         w, h = pygame.display.get_surface().get_size()
         self.x = w / 2
         self.y = h / 2
-        self.width = self.image.get_width()
-        self.height = self.image.get_height()
         self.level = 1
-        self.gun = SingleFireGun()
+        self.gun = SingleFireGun(initial_capacity=self.level + 1)
 
     def move(self):
         x, y = pygame.mouse.get_pos()
-        self.x = x - self.image.get_width() / 2
-        self.y = y - self.image.get_height() / 2
+        self.x = x - self.width / 2
+        self.y = y - self.height / 2
 
     def restart(self):
         self.x = 200
         self.y = 600
-        self.gun.reload_all()
+        self.gun.reload()
 
     def fire(self):
-        self.gun.fire()
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        self.gun.fire(mouse_x, mouse_y)
 
     def upgrade(self):
         self.level += 1
-        SingleStraightBullet.upgrade()
+        UserBullet.upgrade()
         if self.level == 2:
             self.gun = DoubleFireGun(initial_capacity=self.level + 1)
         if self.level == 3:
@@ -78,51 +114,71 @@ class Plane:
 
     def reset(self):
         self.level = 1
-        self.gun = SingleFireGun()
+        self.gun = SingleFireGun(initial_capacity=self.level + 1)
 
     def show(self):
         screen.blit(self.image, (self.x, self.y))
 
     def __str__(self):
-        return "plane: x is {x}, y is {y}".format(x=self.x, y=self.y)
+        return f"{type(self).__name__} position: ({self.x}, {self.y})"
 
 
-class SingleFireGun:
-    def __init__(self, initial_capacity=2):
+class GunInterface:
+    def show_active_bullets(self):
+        pass
+
+    def check_fired_bullets_hit_enemy(self):
+        pass
+
+    def fire(self, position_x, position_y):
+        pass
+
+    def increase_capacity(self):
+        pass
+
+    def upgrade(self):
+        pass
+
+    def reload(self):
+        pass
+
+
+class UserGun(GunInterface):
+    def __init__(self, initial_capacity):
         self.barrels = []
-
         """初始化子弹容量"""
-        self.initial_capacity = initial_capacity
         self.current_bullet_capacity = 0
-        for i in range(self.initial_capacity):
+        for _ in range(initial_capacity):
             self.increase_capacity()
 
-    def show_fire(self):
+    def show_active_bullets(self):
+        for bullets in self.barrels:
+            for b in bullets:
+                if b.active:
+                    b.move()
+                    b.show()
+
+    def check_fired_bullets_hit_enemy(self):
         for bullets in self.barrels:
             for b in bullets:
                 if b.active:
                     global enemies
                     for e in enemies:
-                        if b.check_hit(e):
-                            b.active = False
-                            global score
-                            score += 1
-                    b.move()
-                    b.show()
+                        if b.try_hit(e):
+                            break
 
-    def fire(self):
-        mouse_x, mouse_y = pygame.mouse.get_pos()
+    def fire(self, position_x, position_y):
         for bullets in self.barrels:
-            flying = False
+            at_least_one_flying = False
             for b in bullets:
                 if b.active:
-                    flying = True
-            if not flying:
+                    at_least_one_flying = True
+            if not at_least_one_flying:
                 for b in bullets:
-                    b.restart(mouse_x, mouse_y)
+                    b.restart(position_x, position_y)
                 return
 
-    def reload_all(self):
+    def reload(self):
         """填充所有子弹，不论子弹状态"""
         for bullets in self.barrels:
             for b in bullets:
@@ -133,85 +189,77 @@ class SingleFireGun:
 
     def increase_capacity(self):
         self.current_bullet_capacity += 1
+        self._append_bullets()
+
+    def _append_bullets(self):
+        pass
+
+
+class SingleFireGun(UserGun):
+    def _append_bullets(self):
         self.barrels.append((SingleStraightBullet(),))
 
 
 class DoubleFireGun(SingleFireGun):
-    def __init__(self, initial_capacity=3):
-        SingleFireGun.__init__(self, initial_capacity=initial_capacity)
-
-    def increase_capacity(self):
-        self.current_bullet_capacity += 1
+    def _append_bullets(self):
         self.barrels.append((LeftStraightBullet(), RightStraightBullet()))
 
 
 class TripleFireGun(SingleFireGun):
-    def __init__(self, initial_capacity=4):
-        SingleFireGun.__init__(self, initial_capacity=initial_capacity)
-
-    def increase_capacity(self):
-        self.current_bullet_capacity += 1
+    def _append_bullets(self):
         bullets_tuple = (LeftStraightBullet(), RightStraightBullet(), RightObliqueBullet())
         self.barrels.append(bullets_tuple)
 
 
 class QuadraFireGun(SingleFireGun):
-    def __init__(self, initial_capacity=5):
-        SingleFireGun.__init__(self, initial_capacity=initial_capacity)
-
-    def increase_capacity(self):
-        self.current_bullet_capacity += 1
+    def _append_bullets(self):
         bullets_tuple = (LeftObliqueBullet(), LeftStraightBullet(), RightStraightBullet(), RightObliqueBullet())
         self.barrels.append(bullets_tuple)
 
 
 class HexaFireGun(SingleFireGun):
-    def __init__(self, initial_capacity=6):
-        SingleFireGun.__init__(self, initial_capacity=initial_capacity)
-
-    def increase_capacity(self):
-        self.current_bullet_capacity += 1
+    def _append_bullets(self):
         bullets_tuple = (SecondLeftObliqueBullet(), LeftObliqueBullet(), LeftStraightBullet(), RightStraightBullet(),
                          RightObliqueBullet(), SecondRightObliqueBullet())
         self.barrels.append(bullets_tuple)
 
 
-class BossGun:
-    def __init__(self, initial_capacity=20, cd=125):
+class BossGun(GunInterface):
+    def __init__(self, initial_capacity=20, cd=210):
         self.cd = cd
         self.interval_b = cd
         self.initial_capacity = initial_capacity
         self.current_bullet_capacity = 0
         self.barrels = []
-        for i in range(self.initial_capacity):
+        for _ in range(self.initial_capacity):
             self.increase_capacity()
 
-    def increase_capacity(self):
-        self.current_bullet_capacity += 1
-        self.barrels.append((BossBullet(), BossBullet(), BossBullet(), BossBullet(), BossBullet(), BossBullet()))
-
-    def show_fire(self):
+    def show_active_bullets(self):
         for bullets in self.barrels:
             for b in bullets:
                 if b.active:
-                    global plane
-                    if b.check_hit(plane):
-                        b.active = False
-                        global game_over, you_win
-                        you_win = False
-                        game_over = True
                     b.move()
                     b.show()
+
+    def check_fired_bullets_hit_enemy(self):
+        self.interval_b -= 1
+        if self.interval_b < 0:
+            for bullets in self.barrels:
+                for b in bullets:
+                    if b.active:
+                        global plane
+                        if b.try_hit(plane):
+                            return
 
     def fire(self, x, y):
         self.interval_b -= 1
         if self.interval_b < 0:
             for bullets in self.barrels:
-                flying = False
+                at_least_one_flying = False
                 for b in bullets:
                     if b.active:
-                        flying = True
-                if not flying:
+                        at_least_one_flying = True
+                if not at_least_one_flying:
                     bullets[0].restart(x, y, x_speed=-0.8, y_speed=-0.8)
                     bullets[1].restart(x, y, x_speed=-0.4, y_speed=-0.8)
                     bullets[2].restart(x, y, x_speed=0.0, y_speed=-0.8)
@@ -221,13 +269,17 @@ class BossGun:
                     self.interval_b = self.cd
                     return
 
+    def increase_capacity(self):
+        self.current_bullet_capacity += 1
+        self.barrels.append((BossBullet(), BossBullet(), BossBullet(), BossBullet(), BossBullet(), BossBullet()))
 
-class Bullet:
+
+class Bullet(DisplayableObject, MovingObject):
+    image_object = None
+
     def __init__(self):
-        self.x = 0
-        self.y = 0
+        super(Bullet, self).__init__()
         self.active = False
-        self.image = None
 
     def move(self):
         pass
@@ -237,49 +289,50 @@ class Bullet:
         self.y = y
         self.active = True
 
-    def check_hit(self, who):
+    def try_hit(self, other) -> bool:
         pass
 
     def show(self):
         if self.active:
             screen.blit(self.image, (self.x, self.y))
 
+    def __str__(self):
+        return f"status: {self.active}, position({self.x}, {self.y}), type: {type(self).__name__}"
 
-class SingleStraightBullet(Bullet):
+
+class UserBullet(Bullet):
     damage = 1
+    image_object = user_bullet_img
 
-    def __init__(self):
-        Bullet.__init__(self)
-        self.image = bullet_img
-        self.active = False
+    @classmethod
+    def upgrade(cls):
+        cls.damage *= 1.25
 
+    @classmethod
+    def reset(cls):
+        cls.damage = 1
+
+    def try_hit(self, enemy) -> bool:
+        # print(self.active)
+        assert self.active is True
+        if enemy.is_active and check_collision(self, enemy, scale_factor=0.75):
+            enemy.life -= type(self).damage
+            self.active = False
+            global score, game_level
+            score += 1
+            if enemy.life <= 0:
+                enemy.is_active = False
+                score += enemy.score_reward * 0.8 * game_level
+            return True
+        return False
+
+
+class SingleStraightBullet(UserBullet):
     def move(self):
         if self.active:
             self.y -= 10.0
         if self.y < 0:
             self.active = False
-
-    def check_hit(self, enemy):
-        if (enemy.x + 0 * enemy.width <= self.x <= enemy.x + 1 * enemy.width) and \
-                (enemy.y <= self.y <= enemy.y + enemy.height):
-            enemy.life -= self.damage
-            if enemy.life <= 0:
-                enemy.restart()
-                global score, game_level
-                score += enemy.score_reward * 0.8 * game_level
-            return True
-        return False
-
-    @staticmethod
-    def upgrade():
-        SingleStraightBullet.damage *= 1.25
-
-    @staticmethod
-    def reset():
-        SingleStraightBullet.damage = 1
-
-    def __str__(self):
-        return "x is {x}, y is {y}, active is {active}".format(x=self.x, y=self.y, active=self.active)
 
 
 class LeftStraightBullet(SingleStraightBullet):
@@ -319,7 +372,7 @@ class RightObliqueBullet(RightStraightBullet):
         if self.active:
             self.y -= 8.8
             self.x += 2.0
-        if self.y < 0 or self.x > screen.get_width():
+        if self.y < 0 or self.x > screen_width:
             self.active = False
 
 
@@ -333,9 +386,10 @@ class SecondRightObliqueBullet(RightStraightBullet):
 
 
 class BossBullet(Bullet):
+    image_object = boss_bullet_img
+
     def __init__(self):
-        Bullet.__init__(self)
-        self.image = boss_bullet_img
+        super(BossBullet, self).__init__()
         self.x_speed = 0.4
         self.y_speed = 0.4
         self.active = False
@@ -354,9 +408,13 @@ class BossBullet(Bullet):
         if not (screen_height > self.y > 0 and screen_width > self.x > 0):
             self.active = False
 
-    def check_hit(self, plane):
-        if (plane.x + 0.1 * plane.width <= self.x <= plane.x + 0.9 * plane.width) and \
-                (plane.y + 0.1 * plane.height <= self.y <= plane.y + 0.9 * plane.height):
+    def try_hit(self, user_plane: Plane) -> bool:
+        assert self.active is True
+        if check_collision(self, user_plane, scale_factor=0.7):
+            self.active = False
+            global game_over, you_win
+            you_win = False
+            game_over = True
             return True
         return False
 
@@ -364,58 +422,75 @@ class BossBullet(Bullet):
         return f"x:{self.x} y:{self.y} active:{self.active}"
 
 
-class Enemy:
+class EnemyObject(DisplayableObject, MovingObject):
+    image_object = enemy_img
+    count = 1
+
+    def __init__(self):
+        super(EnemyObject, self).__init__()
+        self.score_reward = 100
+        self.x = 0
+        self.y = 0
+        self.life = 0
+        self.id = type(self).count
+        self.is_active = True
+        type(self).count += 1
+
+    def move(self):
+        pass
+
+    def show(self):
+        if self.is_active:
+            screen.blit(self.image, (self.x, self.y))
+
+    def __str__(self):
+        return f"{type(self).__name__}-{self.id}: active: {self.is_active}, life: {self.life}, position: ({self.x}, {self.y})"
+
+
+class BasicEnemy(EnemyObject):
+    image_object = enemy_img
     count = 1
     life_max = 2
     base_speed = 0.8
 
     def __init__(self):
+        super(BasicEnemy, self).__init__()
         self.score_reward = 100
-        self.image = enemy_img
-        self.width = self.image.get_width()
-        self.height = self.image.get_height()
-        self.x = 0
-        self.y = 0
         self.y_speed = 0.8
         self.x_speed = 0.8
-        self.life = Enemy.life_max
-        self.id = Enemy.count
+        self.life = type(self).life_max
         self.restart()
-        Enemy.count += 1
 
     def move(self):
-        if self.y < 800:
+        if self.y < screen_height:
             self.y += self.y_speed
         else:
-            self.restart()
+            self.is_active = False
 
     def restart(self):
         self.x = random.randint(50, 400)
         self.y = random.randint(-200, -50)
         # base speed is 0.3
-        self.y_speed = random.random() * 4 + Enemy.base_speed
-        self.x_speed = Enemy.base_speed
-        self.life = Enemy.life_max
+        self.y_speed = random.random() * 4 + type(self).base_speed
+        self.x_speed = type(self).base_speed
+        self.life = type(self).life_max
+        self.is_active = True
 
-    @staticmethod
-    def upgrade():
-        Enemy.life_max *= 2
+    @classmethod
+    def upgrade(cls):
+        cls.life_max *= 2
 
-    @staticmethod
-    def reset():
-        Enemy.life_max = 2
-
-    def show(self):
-        screen.blit(self.image, (self.x, self.y))
-
-    def __str__(self):
-        return "x is {x}, y is {y}, id is {id}".format(x=self.x, y=self.y, id=self.id)
+    @classmethod
+    def reset(cls):
+        cls.life_max = 2
 
 
-class StrongEnemy(Enemy):
+class StrongEnemy(BasicEnemy):
+    image_object = strong_enemy
+    count = 0
+
     def __init__(self):
-        Enemy.__init__(self)
-        self.image = strong_enemy
+        super(StrongEnemy, self).__init__()
         self.score_reward = 150
         self.change_direction_interval = 1000
 
@@ -425,29 +500,29 @@ class StrongEnemy(Enemy):
             self.change_direction_interval = 1000
             self.x_speed = -self.x_speed
 
-        if self.y < 800:
+        if self.y < screen_height:
             self.y += self.y_speed
             self.x += self.x_speed
         else:
-            self.restart()
+            self.is_active = False
 
 
-class Boss:
+class Boss(EnemyObject):
+    image_object = boss_img
+    count = 1
+
     def __init__(self):
-        self.image = boss_img
-        self.width = self.image.get_width()
-        self.height = self.image.get_height()
+        super(Boss, self).__init__()
         self.y = 0
         self.x = 0.5 * screen_width - 0.5 * self.width
         self.score_reward = 15000
-        self.life = 2000
+        self.life = 200
         self.x_speed = 0.8
         self.y_speed = 0.8
-        self.is_alive = True
         self.gun = BossGun(initial_capacity=10)
 
     def fire(self):
-        self.gun.fire(self.x + self.image.get_width() / 2, self.y + self.height)
+        self.gun.fire(self.x + self.width / 2, self.y + self.height)
 
     def move(self):
         if self.y < 100:
@@ -460,31 +535,13 @@ class Boss:
             self.x += self.x_speed
 
     def restart(self):
-        self.is_alive = False
-        self.height = 0
-        self.width = 0
-
-    def show(self):
-        if self.is_alive:
-            screen.blit(self.image, (self.x, self.y))
-
-    def __str__(self):
-        return "x is {x}, y is {y}, life left: {life}".format(x=self.x, y=self.y, life=self.life)
-
-
-def check_crash(plane, enemy):
-    if (plane.x + 0.7 * plane.image.get_width() > enemy.x) and (
-            plane.x + 0.3 * plane.image.get_width() < enemy.x + enemy.image.get_width()) and (
-            plane.y + 0.7 * plane.image.get_height() > enemy.y) and (
-            plane.y + 0.3 * plane.image.get_height() < enemy.y + enemy.image.get_height()):
-        return True
-    return False
+        pass
 
 
 enemies = []
 # enemies.append(Boss())
 for i in range(5):
-    enemies.append(Enemy())
+    enemies.append(BasicEnemy())
 
 plane = Plane()
 game_over = False
@@ -495,6 +552,17 @@ threshold = 1000
 game_level = 1
 # control the frame rate
 clock = pygame.time.Clock()
+
+
+def show_all_objects():
+    for e in enemies:
+        e.show()
+        if isinstance(e, Boss):
+            e.gun.show_active_bullets()
+    plane.gun.show_active_bullets()
+    plane.show()
+
+
 while True:
     clock.tick(60)
     plane_fired = False
@@ -506,10 +574,9 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+
         if game_over and event.type == pygame.MOUSEBUTTONUP:
             plane.restart()
-            for e in enemies:
-                e.restart()
             score = 0
             game_over = False
             you_win = False
@@ -517,39 +584,46 @@ while True:
             game_level = 1
             threshold = 1000
             plane.reset()
-            Enemy.reset()
+            BasicEnemy.reset()
             SingleStraightBullet.reset()
-            enemies = []
+
+            enemies.clear()
             for i in range(5):
-                enemies.append(Enemy())
+                enemies.append(BasicEnemy())
 
     screen.blit(background, (0, 0))
 
     if not game_over:
         if plane_fired:
             plane.fire()
-        plane.gun.show_fire()
-        for e in enemies:
-            if check_crash(plane, e):
-                game_over = True
-            if isinstance(e, Boss):
-                if e.is_alive:
-                    e.fire()
-                    e.gun.show_fire()
-                else:
-                    game_over = True
-                    you_win = True
-                    break
-            e.move()
-            e.show()
         plane.move()
-        plane.show()
+        plane.gun.check_fired_bullets_hit_enemy()
+        for e in enemies:
+            if e.is_active:
+                assert e.life > 0
+                if check_collision(plane, e):
+                    game_over = True
+                e.move()
+                if isinstance(e, Boss):
+                    e.fire()
+                    e.gun.check_fired_bullets_hit_enemy()
+            else:
+                if not isinstance(e, Boss):
+                    e.restart()
+
+            if isinstance(e, Boss) and e.life <= 0:
+                game_over = True
+                you_win = True
+                break
+
+        show_all_objects()
+
         score = int(score)
         text = font.render("Score: {score}".format(score=score), 1, (0, 0, 0))
         screen.blit(text, (0, 0))
         if score >= threshold:
             threshold *= 2
-            Enemy.upgrade()
+            BasicEnemy.upgrade()
             enemies.append(StrongEnemy())
             plane.upgrade()
             game_level += 1
@@ -562,19 +636,19 @@ while True:
         score_text_length = text_score.get_width()
         screen.blit(text_score, (w / 2 - score_text_length / 2, h / 6))
 
-        for e in enemies:
-            if e.life > 0:
-                if check_crash(plane, e):
-                    game_over = True
-                    you_win = False
-                e.show()
-            if isinstance(e, Boss):
-                e.gun.show_fire()
         if plane_fired:
             plane.fire()
-        plane.gun.show_fire()
         plane.move()
-        plane.show()
+        plane.gun.check_fired_bullets_hit_enemy()
+        for e in enemies:
+            if isinstance(e, Boss):
+                e.gun.check_fired_bullets_hit_enemy()
+            if e.life > 0:
+                if check_collision(plane, e):
+                    game_over = True
+                    you_win = False
+
+        show_all_objects()
 
     else:
         # show score
