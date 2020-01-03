@@ -5,7 +5,7 @@ multi_processing_fractals/
 luoxiaoheidazuozhan/.idea/
 luoxiaoheidazuozhan/__pycache__/
 /ElectricField/*.pdf
-/multi_processing_fractals
+/multi_processing_fractals/
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
