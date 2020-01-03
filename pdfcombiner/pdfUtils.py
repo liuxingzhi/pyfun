@@ -6,22 +6,23 @@ from PyPDF2 import PdfFileReader, PdfFileWriter, PdfFileMerger
 import time
 import img2pdf
 import sys
+from typing import Iterator, Callable
 
 
-def timeit(func):
+def timeit(func: Callable) -> Callable:
     """一个计时器"""
 
     def wrapper(*args, **kwargs):
-        start = time.clock()
+        start = time.process_time()
         response = func(*args, **kwargs)
-        end = time.clock()
+        end = time.process_time()
         print('time spend:', end - start)
         return response
 
     return wrapper
 
 
-def get_pdf_names(path):
+def get_pdf_names(path: str) -> Iterator[str]:
     """first convert all imgs to corresponding pdfs"""
     all_pictures2pdf(path, fixed_size=True)
 
@@ -33,7 +34,7 @@ def get_pdf_names(path):
                 yield os.path.join(root, file_name)
 
 
-def get_picture_names(path):
+def get_picture_names(path: str) -> Iterator[str]:
     img_extensions = [".jpg", ".png", ".jpeg"]
     for root, dirs, files in os.walk(path):
         files.sort()
@@ -42,7 +43,7 @@ def get_picture_names(path):
                 yield os.path.join(root, file_name)
 
 
-def all_pictures2pdf(path, fixed_size=False):
+def all_pictures2pdf(path: str, fixed_size: bool = False) -> None:
     # specify paper size (A4)
     a4inpt = (img2pdf.mm_to_pt(210), img2pdf.mm_to_pt(297))
     layout_fun = img2pdf.get_layout_fun(a4inpt, auto_orient=True) if fixed_size else img2pdf.get_layout_fun(
@@ -54,15 +55,15 @@ def all_pictures2pdf(path, fixed_size=False):
 
 
 @timeit
-def merge_pdf(path, output_filename, bookmark_separator="", bookmark_start_index=1, password=""):
+def merge_pdf(path: str, output_filename: str, bookmark_separator: str = "", bookmark_start_index: int = 1,
+              password: str = "") -> None:
     """
     合并一个文件里所有的pdf
-    :param path: 文件夹路径
-    :param output_filename: 输出文件名(包含路径)
-    :param bookmark_separator: 用来分割每一个pdf的书签格式，会自动给你添加后缀
-    :bookmark_start_index: 书签后缀开始的序号
-    :password: 如果pdf有加密，这里填pdf的密码
-    :return:
+    :param str path: 文件夹路径
+    :param str output_filename: 输出文件名(包含路径)
+    :param str bookmark_separator: 用来分割每一个pdf的书签格式，会自动给你添加后缀
+    :param int bookmark_start_index: 书签后缀开始的序号
+    :param str password: 如果pdf有加密，这里填pdf的密码
     """
     if os.path.exists(output_filename):
         os.remove(output_filename)
@@ -88,19 +89,26 @@ def merge_pdf(path, output_filename, bookmark_separator="", bookmark_start_index
     print("mission complete")
 
 
-def rotate_pdf(input_filename, output_filename, degree, dir='.'):
+def rotate_pdf(input_filename: str, output_filename: str, degree: int, output_dir='.') -> None:
+    """
+    Rotates a page clockwise by increments of 90 degrees.
+    :param str input_filename: input_pdf name
+    :param str output_filename: output_pdf name
+    :param int degree: Angle to rotate the page.  Must be an increment of 90 deg.
+    :param str output_dir: directory of output file
+    """
     pdf_in = open(input_filename, 'rb')
     pdf_reader = PdfFileReader(pdf_in)
     pdf_writer = PdfFileWriter()
 
-    for pagenum in range(pdf_reader.numPages):
-        page = pdf_reader.getPage(pagenum)
+    for page_number in range(pdf_reader.numPages):
+        page = pdf_reader.getPage(page_number)
         page.rotateClockwise(degree)
         pdf_writer.addPage(page)
 
     if os.path.exists(output_filename):
         os.remove(output_filename)
-    os.chmod(dir, stat.S_IRWXU)  # ensure we have permission
+    os.chmod(output_dir, stat.S_IRWXU)  # ensure we have permission
 
     pdf_out = open(output_filename, 'wb')
     pdf_writer.write(pdf_out)
@@ -108,7 +116,7 @@ def rotate_pdf(input_filename, output_filename, degree, dir='.'):
     pdf_in.close()
 
 
-def print_usage():
+def print_usage() -> None:
     print("usage: python <directory_name> <combined.pdf>")
 
 
@@ -116,7 +124,7 @@ if __name__ == '__main__':
     # print("\n".join(get_file_name('.')))
     # print(os.listdir('.'))
     if len(sys.argv) == 1:
-        merge_pdf("cs412", "412_first_midterm_combined.pdf")
+        merge_pdf("425notes", "cheatsheet425.pdf")
     elif len(sys.argv) == 3:
         merge_pdf(sys.argv[1], sys.argv[2])
     else:
