@@ -12,8 +12,6 @@ pygame.display.set_caption("雪花飘飘")
 origin = pygame.image.load('xiaohei.jpg')
 bg = pygame.transform.scale(origin, SCREEN_SIZE)
 
-snow_list = []
-
 
 class Snowflake:
     def __init__(self):
