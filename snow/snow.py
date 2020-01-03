@@ -20,37 +20,39 @@ class Snowflake:
         self.x = random.randrange(0, SCREEN_SIZE[0])
         self.y = random.randrange(0, SCREEN_SIZE[1])
         self.sx = random.randint(-1, 1)  # x speed
-        self.sy = random.randint(3, 6)  # y speed
-        self.r = random.randint(0, 3)
+        self.sy = random.randint(2, 4)  # y speed
+        self.r = random.randint(1, 4)
 
     def fly(self):
         self.x += self.sx
         self.y += self.sy
+        if self.y > SCREEN_SIZE[1]:
+            self.x = random.randrange(0, SCREEN_SIZE[0])
+            self.y = random.randrange(-50, -10)
 
 
-for i in range(270):
-    snow = Snowflake()
-    snow_list.append(snow)
+class SnowflakeBackground:
+    def __init__(self, snowflake_num: int):
+        self.snowflake_list = [Snowflake() for _ in range(snowflake_num)]
 
-# set the frame rate
-clock = pygame.time.Clock()
-done = False
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
+    def run(self):
+        for snowflake in self.snowflake_list:
+            snowflake.fly()
+            pygame.draw.circle(screen, (255, 255, 255), (snowflake.x, snowflake.y), snowflake.r)
 
-    screen.blit(bg, (0, 0))
-    for snow in snow_list:
-        pygame.draw.circle(screen, (255, 255, 255), (snow.x, snow.y), snow.r)
 
-        snow.fly()
+if __name__ == '__main__':
+    # set the frame rate
+    clock = pygame.time.Clock()
+    snow_background = SnowflakeBackground(100)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
 
-        if snow.y > SCREEN_SIZE[1]:
-            snow.x = random.randrange(0, SCREEN_SIZE[0])
-            snow.y = random.randrange(-50, -10)
-
-    # update the contents of the entire display
-    pygame.display.flip()
-    clock.tick(40)
+        screen.blit(bg, (0, 0))
+        snow_background.run()
+        # update the contents of the entire display
+        pygame.display.flip()
+        clock.tick(60)
