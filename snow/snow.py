@@ -33,7 +33,7 @@ class SnowflakeBackground:
     def __init__(self, snowflake_num: int):
         self.snowflake_list = [Snowflake() for _ in range(snowflake_num)]
 
-    def run(self):
+    def update(self):
         for snowflake in self.snowflake_list:
             snowflake.fly()
             pygame.draw.circle(screen, (255, 255, 255), (snowflake.x, snowflake.y), snowflake.r)
@@ -50,7 +50,7 @@ if __name__ == '__main__':
                 exit()
 
         screen.blit(bg, (0, 0))
-        snow_background.run()
+        snow_background.update()
         # update the contents of the entire display
         pygame.display.flip()
         clock.tick(60)
