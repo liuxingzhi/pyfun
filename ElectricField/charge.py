@@ -1,4 +1,5 @@
-from vpython import *
+from vpython import color, arrow, vector, sphere, rate, canvas
+from numpy import arange
 
 # some useful constants
 k = 9e9  # force constant
@@ -9,8 +10,8 @@ view_space_length = 10
 # Electric charge class
 class ElectricBall(sphere):
     def __init__(self, color=color.red, radius=0, charge=0, pos=vector(0, 0, 0)):
-        self.charge = charge
         sphere.__init__(self, pos=pos, radius=radius, color=color)
+        self.charge = charge
 
 
 # create a list of charges to simulate a eletric bar
@@ -21,7 +22,7 @@ def draw_electrical_field(num_charge):
     # dq = 1e-8 / 6  # define charge of electrons
     dq = Q / num_charge
     charges = []
-    space_between = 2 * view_space_length / (num_charge + 1) # evenly divide space between each electrons
+    space_between = 2 * view_space_length / (num_charge + 1)  # evenly divide space between each electrons
     for x in arange(-view_space_length + space_between, view_space_length, space_between):
         q = ElectricBall(pos=vector(x, 0, 0), radius=1, color=color.red, charge=dq)
         charges.append(q)
@@ -45,7 +46,7 @@ def draw_electrical_field(num_charge):
                         infinity = True
                         break
                     # calculate electric field affected by each electric ball
-                    E = (k * dq / (direction_vector.mag) ** 2) * direction_vector.norm()
+                    E = (k * dq / direction_vector.mag ** 2) * direction_vector.norm()
                     # sum electric field at the each point
                     electrical_vector += E
 
