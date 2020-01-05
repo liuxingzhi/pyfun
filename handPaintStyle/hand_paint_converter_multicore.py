@@ -4,7 +4,10 @@ from PIL import Image
 from typing import Iterator, Callable, Collection
 import numpy as np
 import os
+import re
 
+WITHOUT_TOPMOST_DIR_REGEX = r'^.*?(/+|\\+)(.*)'
+topmost_dir_pattern = re.compile(WITHOUT_TOPMOST_DIR_REGEX)
 queue = multiprocessing.Queue()
 
 
@@ -26,7 +29,11 @@ def handify_dir(old_dir: str, new_dir: str):
     if not os.path.exists(new_dir):
         os.mkdir(new_dir)
     for oldpath in get_picture_names(old_dir):
-        newpath = os.path.join(new_dir, os.path.split(oldpath)[-1])
+        parents_dir = os.path.split(oldpath)[0].replace(old_dir, new_dir, count=1)
+        if not os.path.exists(parents_dir):
+            os.makedirs(parents_dir)
+        newpath = os.path.join(new_dir, re.search(topmost_dir_pattern, oldpath).group(2))
+        # print(newpath)
         queue.put((oldpath, newpath))
     worker_num = 4
     pool = multiprocessing.Pool(worker_num)
