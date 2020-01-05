@@ -8,6 +8,8 @@ img_ext = {"jpg", "jpeg", "png", "gif"}
 
 
 def handify_dir(old_dir: str, new_dir: str):
+    if not os.path.exists(new_dir):
+        os.mkdir(new_dir)
     directory = os.listdir(old_dir)
     for index, filename in enumerate(directory):
         oldpath = os.path.join(old_dir, filename)
@@ -47,4 +49,4 @@ def handify(img_path: str, save_path: str):
 
 if __name__ == '__main__':
     # convert("beijing.jpg", "beijingHD.jpg")
-    handify_dir("inputs", "outputs")
+    handify_dir("1234", "5678")
