@@ -6,7 +6,7 @@ from PyPDF2 import PdfFileReader, PdfFileWriter, PdfFileMerger
 import time
 import img2pdf
 import sys
-from typing import Iterator, Callable
+from typing import Iterator, Callable, Collection
 
 
 def timeit(func: Callable) -> Callable:
@@ -22,25 +22,24 @@ def timeit(func: Callable) -> Callable:
     return wrapper
 
 
-def get_pdf_names(path: str) -> Iterator[str]:
-    """first convert all imgs to corresponding pdfs"""
-    all_pictures2pdf(path, fixed_size=True)
-
+def sieve(path: str, desired: Collection) -> Iterator[str]:
     """walk can recursively list sub directories"""
     for root, dirs, files in os.walk(path):
         files.sort()
         for file_name in files:
-            if os.path.splitext(file_name)[-1].lower() == ".pdf":
+            if os.path.splitext(file_name)[-1].lower() in desired:
                 yield os.path.join(root, file_name)
+
+
+def get_pdf_names(path: str) -> Iterator[str]:
+    """first convert all imgs to corresponding pdfs"""
+    all_pictures2pdf(path, fixed_size=True)
+    return sieve(path, [".pdf"])
 
 
 def get_picture_names(path: str) -> Iterator[str]:
-    img_extensions = [".jpg", ".png", ".jpeg"]
-    for root, dirs, files in os.walk(path):
-        files.sort()
-        for file_name in files:
-            if os.path.splitext(file_name)[1].lower() in img_extensions:
-                yield os.path.join(root, file_name)
+    img_extensions = {".jpg", ".png", ".jpeg"}
+    return sieve(path, img_extensions)
 
 
 def all_pictures2pdf(path: str, fixed_size: bool = False) -> None:
@@ -49,7 +48,7 @@ def all_pictures2pdf(path: str, fixed_size: bool = False) -> None:
     layout_fun = img2pdf.get_layout_fun(a4inpt, auto_orient=True) if fixed_size else img2pdf.get_layout_fun(
         auto_orient=True)
     for pic_name in get_picture_names(path):
-        pdf_name = pic_name[:-4] + ".pdf"
+        pdf_name = pic_name.split(".")[-1] + ".pdf"
         with open(pdf_name, "wb") as pdf:
             pdf.write(img2pdf.convert(pic_name, layout_fun=layout_fun))
 
@@ -124,7 +123,7 @@ if __name__ == '__main__':
     # print("\n".join(get_file_name('.')))
     # print(os.listdir('.'))
     if len(sys.argv) == 1:
-        merge_pdf("425notes", "cheatsheet425.pdf")
+        merge_pdf("imgs", "testimg.pdf")
     elif len(sys.argv) == 3:
         merge_pdf(sys.argv[1], sys.argv[2])
     else:
