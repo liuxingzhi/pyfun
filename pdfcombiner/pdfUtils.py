@@ -70,7 +70,7 @@ def merge_pdf(path: str, output_filename: str, bookmark_separator: str = "", boo
     output_pdf = PdfFileMerger()
     output_page_num = 0
     for index, pdf_path_with_name in enumerate(get_pdf_names(path), bookmark_start_index):
-        print(pdf_path_with_name)
+        # print(pdf_path_with_name)
         with open(pdf_path_with_name, "rb") as pdf:
             content = PdfFileReader(pdf)
             if content.isEncrypted:
