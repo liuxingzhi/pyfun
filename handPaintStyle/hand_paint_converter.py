@@ -27,7 +27,7 @@ def handify_dir(old_dir: str, new_dir: str):
     if not os.path.exists(new_dir):
         os.mkdir(new_dir)
     for oldpath in get_picture_names(old_dir):
-        parents_dir = os.path.split(oldpath)[0].replace(old_dir, new_dir, count=1)
+        parents_dir = os.path.split(oldpath)[0].replace(old_dir, new_dir, 1)
         if not os.path.exists(parents_dir):
             os.makedirs(parents_dir)
         newpath = os.path.join(new_dir, re.search(topmost_dir_pattern, oldpath).group(2))
