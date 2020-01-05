@@ -1,9 +1,11 @@
 # 借鉴于中国MOOC大学python数据分析教程 嵩天教授
-from multiprocessing import Manager
+import multiprocessing
 from PIL import Image
 from typing import Iterator, Callable, Collection
 import numpy as np
 import os
+
+queue = multiprocessing.Queue()
 
 
 def sieve(path: str, desired: Collection) -> Iterator[str]:
@@ -25,8 +27,26 @@ def handify_dir(old_dir: str, new_dir: str):
         os.mkdir(new_dir)
     for oldpath in get_picture_names(old_dir):
         newpath = os.path.join(new_dir, os.path.split(oldpath)[-1])
-        handify(oldpath, newpath)
-        print(f"handified {oldpath} to {newpath}")
+        queue.put((oldpath, newpath))
+    worker_num = 4
+    pool = multiprocessing.Pool(worker_num)
+    for i in range(worker_num):
+        queue.put(None)
+    for i in range(worker_num):
+        pool.apply_async(worker)
+        print("start a new process", i)
+    pool.close()
+    pool.join()
+
+
+def worker():
+    while True:
+        task = queue.get()
+        if task is None:
+            break
+        img_path, save_path = task
+        handify(img_path, save_path)
+        print(f"handified {img_path} to {save_path}")
 
 
 def handify(img_path: str, save_path: str):
