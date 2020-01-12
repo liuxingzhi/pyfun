@@ -22,8 +22,8 @@ class LoopMusic(Thread):
 
 
 class BackgroundMusic:
-    def __init__(self, song_name: str, interval=3, forever=True):
-        self.thread = LoopMusic(song_name, interval=interval, forever=forever)
+    def __init__(self, song_name: str, loop=1, interval=3, forever=True):
+        self.thread = LoopMusic(song_name, loop=loop, interval=interval, forever=forever)
         self.thread.setDaemon(True)
 
     def run(self):
