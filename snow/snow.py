@@ -3,6 +3,7 @@
 # coding=UTF-8
 import pygame
 import random
+from musicUtils import BackgroundMusic
 
 pygame.init()
 SCREEN_SIZE = (450, 869)
@@ -10,25 +11,6 @@ screen = pygame.display.set_mode(SCREEN_SIZE)
 pygame.display.set_caption("雪花飘飘")
 origin = pygame.image.load('xiaohei.jpg')
 bg = pygame.transform.scale(origin, SCREEN_SIZE)
-
-
-class BackgroundMusic:
-    def __init__(self, song_name: str):
-        from threading import Thread
-        from pydub import AudioSegment
-        from pydub.playback import play
-        self.audio = AudioSegment.from_mp3(song_name)
-        self.thread = Thread(target=play, args=(self.audio,), daemon=True)
-
-    def run(self):
-        self.thread.start()
-
-    def __enter__(self):
-        self.run()
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        # self.thread.join()
-        pass
 
 
 class Snowflake:
@@ -61,7 +43,7 @@ if __name__ == '__main__':
     # set the frame rate
     clock = pygame.time.Clock()
     snow_background = SnowflakeBackground(100)
-    with BackgroundMusic("luoxiaohei.mp3"):
+    with BackgroundMusic("luoxiaohei.mp3", forever=True):
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
