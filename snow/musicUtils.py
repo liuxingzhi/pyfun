@@ -7,7 +7,7 @@ from time import sleep
 class LoopMusic(Thread):
     def __init__(self, music, loop=1, interval=3, forever=False):
         super(LoopMusic, self).__init__()
-        self.audio = AudioSegment.from_mp3(music)
+        self.audio = AudioSegment.from_file(music)
         self.interval = interval
         if forever:
             self.loop = float("inf")
