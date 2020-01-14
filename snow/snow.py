@@ -5,9 +5,15 @@ import pygame
 import random
 from musicUtils import BackgroundMusic
 
+frame_rate = 45
+speed_unit = 60 / frame_rate
+
 pygame.init()
 SCREEN_SIZE = (450, 869)
 screen = pygame.display.set_mode(SCREEN_SIZE)
+# screen = pygame.display.set_mode()
+# SCREEN_WIDTH, SCREEN_HEIGHT = pygame.display.get_surface().get_size()
+# SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
 pygame.display.set_caption("雪花飘飘")
 origin = pygame.image.load('xiaohei.jpg')
 bg = pygame.transform.scale(origin, SCREEN_SIZE)
@@ -17,8 +23,8 @@ class Snowflake:
     def __init__(self):
         self.x = random.randrange(0, SCREEN_SIZE[0])
         self.y = random.randrange(0, SCREEN_SIZE[1])
-        self.sx = random.randint(-1, 1)  # x speed
-        self.sy = random.randint(2, 4)  # y speed
+        self.sx = random.uniform(-1 * speed_unit, 1 * speed_unit)  # x speed
+        self.sy = random.uniform(2 * speed_unit, 4 * speed_unit)  # y speed
         self.r = random.randint(1, 4)
 
     def fly(self):
@@ -36,13 +42,13 @@ class SnowflakeBackground:
     def update(self):
         for snowflake in self.snowflake_list:
             snowflake.fly()
-            pygame.draw.circle(screen, (255, 255, 255), (snowflake.x, snowflake.y), snowflake.r)
+            pygame.draw.circle(screen, (255, 255, 255), (round(snowflake.x), round(snowflake.y)), snowflake.r)
 
 
 if __name__ == '__main__':
     # set the frame rate
     clock = pygame.time.Clock()
-    snow_background = SnowflakeBackground(100)
+    snow_background = SnowflakeBackground(150)
     with BackgroundMusic("luoxiaohei.mp3", forever=True):
         while True:
             for event in pygame.event.get():
