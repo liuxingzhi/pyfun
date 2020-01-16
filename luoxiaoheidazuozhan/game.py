@@ -316,6 +316,7 @@ class UserBullet(Bullet):
         # print(self.active)
         assert self.active is True
         if enemy.is_active and check_collision(self, enemy, scale_factor=0.75):
+            # print("hit", enemy.life, type(self).damage, plane.level)
             enemy.life -= type(self).damage
             self.active = False
             global score, game_level
@@ -585,12 +586,15 @@ while True:
             threshold = 1000
             plane.reset()
             BasicEnemy.reset()
-            SingleStraightBullet.reset()
+            UserBullet.reset()
 
             enemies.clear()
             for i in range(5):
                 enemies.append(BasicEnemy())
-
+            # print("========")
+            # print(BasicEnemy.life_max, enemies[0].life_max)
+            # print(StrongEnemy.life_max)
+            # print(UserBullet.damage, plane.gun.barrels)
     screen.blit(background, (0, 0))
 
     if not game_over:
