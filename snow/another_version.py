@@ -1,13 +1,11 @@
-# learn from Crossin's wechat
+# 雪花从天而降,从顶部开始随机
 # practice for python
 # coding=UTF-8
 import pygame
 import random
 from musicUtils import BackgroundMusic
-from typing import Dict, Set
-import itertools
 
-frame_rate = 45
+frame_rate = 30
 speed_unit = 60 / frame_rate
 
 pygame.init()
@@ -23,45 +21,53 @@ bg = pygame.transform.scale(origin, SCREEN_SIZE)
 
 
 class Snowflake:
-    def __init__(self):
+    def __init__(self, collection):
         self.x = random.randrange(0, SCREEN_SIZE[0])
-        self.y = random.randrange(0, SCREEN_SIZE[1])
+        self.y = -0.1 * SCREEN_HEIGHT
         self.sx = random.uniform(-1 * speed_unit, 1 * speed_unit)  # x speed
         self.sy = random.uniform(2 * speed_unit, 4 * speed_unit)  # y speed
         self.r = random.randint(1, 4)
+        self.to_be_deleted = False
+        self.collection = collection
 
     def fly(self):
         self.x += self.sx
         self.y += self.sy
         if self.y > SCREEN_SIZE[1]:
-            self.x = random.randrange(0, SCREEN_SIZE[0])
-            self.y = random.randrange(-50, -10)
+            self.collection.remove(self)
 
 
 class SnowflakeBackground:
-    def __init__(self, snowflake_num: int = 150):
-        self.max_number = 5000
-        self.initial_snowflake_num = snowflake_num
-        self.snowflake_list = []
-        self.increase_snowflakes(self.initial_snowflake_num)
+    def __init__(self, fall_rate: float = 0.5):
+        self.snowflake_collection = set()
+        self.fluctuation = 1
+        self.max_rate = 36
+        self.min_rate = -1.5 * self.fluctuation
+        self.fall_rate = fall_rate if fall_rate < self.max_rate else self.max_rate
         self.active = True
 
+    def generate_snowflakes(self):
+        new_snows = int(random.normalvariate(self.fall_rate, self.fluctuation))
+        if new_snows <= 0:
+            return
+        for _ in range(new_snows):
+            self.snowflake_collection.add(Snowflake(self.snowflake_collection))
+
     def update(self):
+        # print(len(self.snowflake_collection))
         if self.active:
-            for snowflake in self.snowflake_list.copy():
+            self.generate_snowflakes()
+            for snowflake in self.snowflake_collection.copy():
                 snowflake.fly()
                 pygame.draw.circle(screen, (255, 255, 255), (round(snowflake.x), round(snowflake.y)), snowflake.r)
 
-    def increase_snowflakes(self, snowflake_num: int = 50):
-        # print(len(self.snowflake_list))
-        if len(self.snowflake_list) < self.max_number:
-            normed = snowflake_num + round(len(self.snowflake_list) * 0.2)
-            for _ in range(normed):
-                self.snowflake_list.append(Snowflake())
+    def increase_snowflakes(self, rate: float = 0.5):
+        if self.fall_rate < self.max_rate:
+            self.fall_rate += rate + (self.fall_rate * 0.1)
 
-    def decrease_snowflakes(self, snowflake_num: int = 50):
-        normed = snowflake_num + round(len(self.snowflake_list) * 0.2)
-        self.snowflake_list = self.snowflake_list[:-normed]
+    def decrease_snowflakes(self, rate: float = 0.5):
+        if self.fall_rate > self.min_rate:
+            self.fall_rate -= rate + (self.fall_rate * 0.1)
 
     def switch_visibility(self):
         self.active = not self.active
@@ -70,7 +76,7 @@ class SnowflakeBackground:
 if __name__ == '__main__':
     # set the frame rate
     clock = pygame.time.Clock()
-    snow_background = SnowflakeBackground(150)
+    snow_background = SnowflakeBackground(1)
     with BackgroundMusic("luoxiaohei.mp3", forever=True):
         while True:
             for event in pygame.event.get():
@@ -79,9 +85,9 @@ if __name__ == '__main__':
                         pygame.quit()
                         exit(0)
                     elif event.unicode == "+":
-                        snow_background.increase_snowflakes(50)
+                        snow_background.increase_snowflakes()
                     elif event.key == pygame.K_MINUS:
-                        snow_background.decrease_snowflakes(50)
+                        snow_background.decrease_snowflakes()
                     elif event.key == pygame.K_s:
                         snow_background.switch_visibility()
                 if event.type == pygame.QUIT:
