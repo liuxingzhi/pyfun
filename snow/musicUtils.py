@@ -2,34 +2,44 @@ from threading import Thread
 from pydub import AudioSegment
 from pydub.playback import play
 from time import sleep
+from pygame import mixer  # Load the popular external library
+import platform
 
 
 class LoopMusic(Thread):
-    def __init__(self, music, loop=1, interval=3, forever=False):
+    def __init__(self, music, loops=1, interval=3):
         super(LoopMusic, self).__init__()
         self.audio = music
         self.interval = interval
-        if forever:
-            self.loop = float("inf")
-        else:
-            self.loop = loop
+        self.loops = loops
 
     def run(self):
-        while self.loop >= 1:
+        while self.loops >= 1:
             play(self.audio)
-            self.loop -= 1
+            self.loops -= 1
             sleep(self.interval)
 
 
 class BackgroundMusic:
-    def __init__(self, song_name: str, loop=1, interval=3, forever=True):
+    def __init__(self, song_name: str, loops=1, interval=3, forever=True):
         self.song_name = song_name
-        self.music = AudioSegment.from_file(song_name)
-        self.thread = LoopMusic(self.music, loop=loop, interval=interval, forever=forever)
-        self.thread.setDaemon(True)
+        self.loops = loops
+        if forever:
+            self.loops = float("inf")
+        self.interval = interval
+        self.forever_flag = forever
 
     def run(self):
-        self.thread.start()
+        if platform.system() == "Windows":
+            mixer.init()
+            mixer.music.load(self.song_name)
+            mixer.music.play(loops=self.loops)
+
+        elif platform.system() == "Linux":
+            music = AudioSegment.from_file(self.song_name)
+            thread = LoopMusic(music, loops=self.loops, interval=self.interval)
+            thread.setDaemon(True)
+            thread.start()
 
     def __enter__(self):
         self.run()
