@@ -1,9 +1,11 @@
 from threading import Thread
-from pydub import AudioSegment
-from pydub.playback import play
+import platform
+
+if platform.system() == "Linux":
+    from pydub import AudioSegment
+    from pydub.playback import play
 from time import sleep
 from pygame import mixer  # Load the popular external library
-import platform
 
 
 class LoopMusic(Thread):
