@@ -3,7 +3,7 @@ from numpy import arange
 
 # some useful constants
 k = 9e9  # force constant
-q = 1.6e-19  # unit of charge
+q = 1.6e-19 * 2  # unit of charge
 view_space_length = 10
 
 
@@ -64,7 +64,7 @@ def draw_electrical_field(num_charge):
 
 
 def main():
-    draw_electrical_field(200)
+    draw_electrical_field(6)
 
 
 if __name__ == '__main__':
