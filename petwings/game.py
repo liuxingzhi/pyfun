@@ -564,10 +564,15 @@ def show_all_objects():
     plane.show()
 
 
+screen_active = True
+stop_when_mouse_leave = True
 while True:
     clock.tick(60)
     plane_fired = False
     for event in pygame.event.get():
+        if event.type == pygame.ACTIVEEVENT:
+            screen_active = not screen_active
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 plane_fired = True
@@ -596,6 +601,9 @@ while True:
             # print(StrongEnemy.life_max)
             # print(UserBullet.damage, plane.gun.barrels)
     screen.blit(background, (0, 0))
+
+    if stop_when_mouse_leave and not screen_active:
+        continue
 
     if not game_over:
         if plane_fired:
