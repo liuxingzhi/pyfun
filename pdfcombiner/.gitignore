@@ -1,4 +1,8 @@
 *.pdf
+*.docx
+*.zip
+*.jpg
 .vscode/
 .idea/
 ./
+handouts/
