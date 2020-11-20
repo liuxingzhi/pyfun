@@ -59,7 +59,7 @@ def worker():
 def handify(img_path: str, save_path: str):
     a = np.asarray(Image.open(img_path).convert('L')).astype('float')
 
-    depth = 40.  # (0-100)，每张图片的最佳深度值不一样，需要自己调整
+    depth = 125.  # (0-100)，每张图片的最佳深度值不一样，需要自己调整
     grad = np.gradient(a)  # 取图像灰度的梯度值
     grad_x, grad_y = grad  # 分别取横纵图像梯度值
     grad_x = grad_x * depth / 100.
@@ -86,4 +86,4 @@ def handify(img_path: str, save_path: str):
 
 if __name__ == '__main__':
     # convert("beijing.jpg", "beijingHD.jpg")
-    handify_dir("inputs", "outputs")
+    handify_dir("2222", "2333")

@@ -100,7 +100,7 @@ class Plane(DisplayableObject, MovingObject):
         UserBullet.upgrade()
         if self.level == 2:
             self.gun = DoubleFireGun(initial_capacity=self.level + 1)
-        if self.level == 3:
+        elif self.level == 3:
             pass
         elif self.level == 4:
             self.gun = TripleFireGun(initial_capacity=self.level + 1)
@@ -488,7 +488,7 @@ class BasicEnemy(EnemyObject):
 
 class StrongEnemy(BasicEnemy):
     image_object = strong_enemy
-    count = 0
+    count = 1
 
     def __init__(self):
         super(StrongEnemy, self).__init__()

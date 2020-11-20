@@ -8,4 +8,4 @@ when an inspiration comes, write a python program
   - ***wechat*** Robot: an automatic response robot in wechat(a chatting software).support search words and phrases, language translation and auto chatting.
   - ***handPaintStyle***: convert imgs into hand painting style pictures
   - ***pdfcombiner***: an utility to help combine all pdfs into a single one
-    
+  - ***lovelyKangna***: Reproduce the famous scene XiaoLin drawing Kangna in anime *Miss Kobayashi's Dragon Maid*

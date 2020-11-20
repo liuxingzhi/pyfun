@@ -1,9 +1,12 @@
 # Created by .ignore support plugin (hsz.mobi)
 !.gitignore
+.idea/
+.vscode/
 ElectricField/2+VP+E+of+charged+rod+2018.pdf
 multi_processing_fractals/
 luoxiaoheidazuozhan/.idea/
 luoxiaoheidazuozhan/__pycache__/
+luoxiaoheidazuozhan (copy)/
 /ElectricField/*.pdf
 /multi_processing_fractals/
 ### Python template
