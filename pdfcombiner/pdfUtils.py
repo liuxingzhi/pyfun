@@ -60,7 +60,7 @@ def merge_pdf(path: str, output_filename: str, bookmark_separator: str = "", boo
     合并一个文件里所有的pdf
     :param str path: 文件夹路径
     :param str output_filename: 输出文件名(包含路径)
-    :param str bookmark_separator: 用来分割每一个pdf的书签格式，会自动给你添加后缀
+    :param str bookmark_separator: 用来分割每一个pdf的书签格式, 如果没有会按照文件名命名书签
     :param int bookmark_start_index: 书签后缀开始的序号
     :param str password: 如果pdf有加密，这里填pdf的密码
     """
@@ -79,7 +79,7 @@ def merge_pdf(path: str, output_filename: str, bookmark_separator: str = "", boo
             if bookmark_separator:
                 output_pdf.addBookmark(bookmark_separator + str(index), output_page_num)
             else:
-                output_pdf.addBookmark(pdf_path_with_name.split("/")[-1] + str(index), output_page_num)
+                output_pdf.addBookmark(pdf_path_with_name.split("\\")[-1].split(".")[0], output_page_num)
             output_pdf.append(content)
             output_page_num += content.numPages
 
@@ -123,7 +123,7 @@ if __name__ == '__main__':
     # print("\n".join(get_file_name('.')))
     # print(os.listdir('.'))
     if len(sys.argv) == 1:
-        merge_pdf("driving开车", "driving.pdf")
+        merge_pdf("final-ppt", "465-final-ppts-combined.pdf")
     elif len(sys.argv) == 3:
         merge_pdf(sys.argv[1], sys.argv[2])
     else:
