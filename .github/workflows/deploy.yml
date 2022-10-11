@@ -1,0 +1,29 @@
+name: Github Actions Demo
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  my_first_job:
+    name: My First Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print a greeting
+        env:
+          MY_VAR: Hi there! My name is
+          FIRST_NAME: Mona
+          MIDDLE_NAME: The
+          LAST_NAME: Octocat
+        run: echo hello $MY_VAR $FIRST_NAME $MIDDLE_NAME $LAST_NAME.
+
+  my_second_job:
+    needs: my_first_job
+    name: My Second Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test secret format
+        run: echo oh my secret ${{ secrets.secret1 }}
