@@ -26,4 +26,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Test secret format
-        run: echo oh my secret ---"${{ secrets.SECRIT1 }}"---
+        run: echo oh my secret ---${{ secrets.SECRIT1 }}---
