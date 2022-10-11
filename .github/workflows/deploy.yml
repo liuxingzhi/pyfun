@@ -11,6 +11,7 @@ jobs:
   my_first_job:
     name: My First Job
     runs-on: ubuntu-latest
+    environment: test1
     steps:
       - name: Print a greeting
         env:
@@ -23,7 +24,8 @@ jobs:
   my_second_job:
     needs: my_first_job
     name: My Second Job
+    environment: test1
     runs-on: ubuntu-latest
     steps:
       - name: Test secret format
-        run: echo oh my secret ---${{ secrets.SECRIT1 }}---
+        run: echo oh my secret ---${{ secrets.SECRIT1 }}------${{secrets.ENV_SECRET1}}
