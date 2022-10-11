@@ -24,7 +24,7 @@ jobs:
   my_second_job:
     needs: my_first_job
     name: My Second Job
-    environment: test1
+    # environment: test1
     runs-on: ubuntu-latest
     steps:
       - name: Test secret format
