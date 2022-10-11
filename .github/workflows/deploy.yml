@@ -29,5 +29,5 @@ jobs:
     steps:
       - name: Test secret format
         env:
-          secret_secure: ${{secrets.SECRIT_WOC}}
-        run: echo oh my secret ==="$secret_secure"==== ---${{ secrets.SECRIT_WOC }}------${{secrets.ENV_SECRET1}}
+          secret_secure: ${{secrets.SECRET1}}
+        run: echo oh my secret ==="$secret_secure"==== ---${{ secrets.SECRET1 }}------${{secrets.ENV_SECRET1}}
